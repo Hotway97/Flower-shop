@@ -1,5 +1,6 @@
 package com.example.flowers.services;
 
+import com.example.flowers.models.User;
 import com.example.flowers.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

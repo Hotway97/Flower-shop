@@ -11,9 +11,4 @@ public class FlowersApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FlowersApplication.class, args);
 	}
-
-	@Bean
-	public ChatClient ollamaChatClient(OllamaChatModel chatModel) {
-		return ChatClient.create(chatModel);
-	}
 }

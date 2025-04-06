@@ -44,7 +44,15 @@
             color: #000;
             background-color: rgba(0,0,0,0.05);
         }
-
+        .btn-outline-secondary {
+            color: black;
+            border-color: black;
+        }
+        .btn-outline-secondary:hover {
+            color: white;
+            background-color: black;
+            border-color: black;
+        }
     </style>
 </head>
 <body data-user-id="${user.id}">
@@ -65,7 +73,11 @@
                 <a class="nav-link mx-2" style="color:white" href="/cart">
                     Корзина
                     <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
-                        <span class="badge badge-light ml-1">${user.cart.cartItems?size}</span>
+                        <#assign totalQuantity = 0>
+                        <#list user.cart.cartItems as item>
+                            <#assign totalQuantity += item.quantity>
+                        </#list>
+                        <span class="badge badge-light ml-1">${totalQuantity}</span>
                     </#if>
                 </a>
             </li>
@@ -125,7 +137,7 @@
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <span>Товары (${user.cart.cartItems?size}):</span>
+                            <span>Товары:</span>
                             <span>${user.cart.totalPrice} ₽</span>
                         </div>
                         <hr>
@@ -152,34 +164,6 @@
     </#if>
 </div>
 
-<style>
-    .modal-close-btn {
-        color: #000;
-        opacity: 0.75;
-        transition: opacity 0.2s;
-        border: none;
-        background: none;
-        padding: 0.25rem;
-        line-height: 1;
-        width: 1.75rem;
-        height: 1.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .modal-close-btn:hover {
-        opacity: 1;
-        color: #000;
-        background-color: rgba(0,0,0,0.05);
-    }
-    .checkout-btn, .btn-outline-secondary {
-        padding-top: 0.5rem;
-        padding-bottom: 0.5rem;
-        font-size: 1rem;
-    }
-</style>
-
-<<!-- Модальное окно -->
 <!-- Модальное окно -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -210,8 +194,6 @@
         </div>
     </div>
 </div>
-
-
 
 <footer class="footer mt-auto">
     <ul class="social-icon">

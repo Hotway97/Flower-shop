@@ -2,38 +2,42 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
-
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-
-    <title>Flowers shop</title>
+    <title>Корзина | Flowers shop</title>
+    <style>
+        .product-card {
+            transition: transform 0.3s;
+        }
+        .product-card:hover {
+            transform: scale(1.03);
+        }
+        .empty-cart-icon {
+            font-size: 5rem;
+            color: #7b63f4;
+            margin-bottom: 1rem;
+        }
+        .checkout-btn {
+            background-color: #7b63f4;
+            border: none;
+            padding: 12px 0;
+            font-size: 1.2rem;
+        }
+        .checkout-btn:hover {
+            background-color: #6a52e3;
+        }
+    </style>
 </head>
-<script>
-function calcCartPrice() {
-	const cartWrapper = document.querySelector('.card-body');
-	const priceElements = document.getElementsByClassName('card-price');
-	const totalPriceEl = document.querySelector('.total-price');
-	let priceTotal = 0;
-
-    for (var i = 0; i < priceElements.length; i++){
-        priceTotal += parseInt(priceElements[i].innerText.replace(/\s/g, ""))
-    }
-
-	totalPriceEl.innerText = priceTotal;
-}
-</script>
-<body onload = "calcCartPrice()">
+<body>
 <nav class="navbar navbar-expand-lg navbar-dark my">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
             <span class="navbar-brand mb-0 h1">Flowers shop</span>
         </a>
-        <input id="menu-toggle" type="checkbox" >
+        <input id="menu-toggle" type="checkbox">
         <label class='menu-button-container' for="menu-toggle">
             <div class='menu-button'></div>
         </label>
@@ -42,124 +46,161 @@ function calcCartPrice() {
                 <a class="nav-link mx-2" style="color:white" href="/">Главная</a>
             </li>
             <li class="nav-item1">
-                <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/info">О нас</a>
+                <a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link mx-2" style="color:white" href="/cart">
+                    Корзина
+                    <#if user?? && user.cart?? && user.cart.products?size gt 0>
+                        <span class="badge badge-light ml-1">${user.cart.products?size}</span>
+                    </#if>
+                </a>
+            </li>
         </ul>
 
+        <#if user?? && user.email??>
+            <div class="dropdown text-end">
+                <#if user.avatar??>
+                    <img src="/images/${user.avatar.id}" alt="Аватар" width="32" height="32" class="rounded-circle">
+                <#else>
+                    <img src="/static/images/avatar.png" alt="Аватар" width="32" height="32" class="rounded-circle">
+                </#if>
+            </div>
+        <#else>
+            <button class="btn btn-light my-2 my-sm-0" type="button"
+                    onclick="window.location.href = '/login'">
+                Войти
+            </button>
+        </#if>
     </div>
 </nav>
-<div class="container mt-4">
-</div>
-<h1 style="text-align: center">Товары в корзине:</h1>
-<hr>
 
-<div class="collapse mb-3" id="collapseExample" style="">
-    <form action="/product/create" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="productName">Название товара</label>
-            <input type="text" required class="form-control"
-                   id="productName" name="title">
-        </div>
-        <div class="form-group">
-            <label for="price">Цена товара</label>
-            <div class="input-group mb-3">
-                <input type="number" required class="form-control" id="price" name="price">
-                <div class="input-group-append">
-                    <span class="input-group-text">₽</span>
+<div class="container mt-4 mb-5">
+    <h1 class="text-center mb-4">Ваша корзина</h1>
+
+    <#if user?? && user.cart?? && user.cart.products?has_content>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Товары</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <#list user.cart.products as product>
+                            <div class="d-flex align-items-center p-3 border-bottom" data-product-id="${product.id}">
+                                <a href="/product/${product.id}" class="mr-3">
+                                    <img src="/images/${product.previewImageId}"
+                                         class="img-fluid rounded"
+                                         style="width: 100px; height: 100px; object-fit: cover;">
+                                </a>
+                                <div class="flex-grow-1">
+                                    <h5 class="mb-1">${product.title}</h5>
+                                    <p class="mb-1 text-muted">${product.description}</p>
+                                    <h5 class="mb-0 text-primary">${product.price} ₽</h5>
+                                </div>
+                                <form action="/cart/remove/${product.id}" method="post">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <ion-icon name="trash-outline"></ion-icon>
+                                    </button>
+                                </form>
+                            </div>
+                        </#list>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">Итого</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Товары (${user.cart.products?size}):</span>
+                            <span>${user.cart.totalPrice} ₽</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="mb-0">Общая сумма:</h5>
+                            <h5 class="mb-0 text-primary">${user.cart.totalPrice} ₽</h5>
+                        </div>
+                        <button id="enrollBtn" type="button" class="btn checkout-btn btn-block btn-lg">
+                            Оформить заказ
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="description">Описание товара</label>
-            <textarea required class="form-control" id="description" name="description"></textarea>
-        </div>
-        <div class="form-group">
-            <div class="custom-file">
-                <input required type="file" name="file1" id="file1">
-                <label class="custom-file-label" for="file1">Первая фотография к товару</label>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="custom-file">
-                <input type="file" name="file2" id="file2">
-                <label class="custom-file-label" for="file2">Вторая фотография к товару</label>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="custom-file">
-                <input type="file" name="file3" id="file3">
-                <label class="custom-file-label" for="file3">Третья фотография к товару</label>
-            </div>
-        </div>
-        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-
-        <button type="submit" style="width: 100%" class="btn btn-dark">Добавить</button>
-    </form>
-</div>
-<div class="card-columns">
-    <#list cart_list as product>
-    <a  href="/product/${product.id}" class="product-link">
-        <div class="card text-white bg-dark my-3 product">
-            <div class="card-top">
-                <form action="/cart/remove/${product.id}" method="post" enctype="multipart/form-data" style="text-align: right;">
-                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                    <button style="margin-left:auto" type="submit" class="btn btn-danger m-3">
-                        Удалить
-                    </button>
-                </form>
-            </div>
-            <img src="/images/${product.previewImageId}"
-                 class="card-img-top">
-            <div class="card-body">
-                <h5 class="card-title">${product.title}</h5>
-                <p class="card-price">${product.price} ₽</p>
-                <p class="card-text">${product.description}</p>
-            </div>
-        </div>
-    </a>
-
     <#else>
-    <h1 style="text-align: center">Не найдено</h1>
-    </#list>
-</div>
-<div>
-    <div class="card-total">
-            <p style="text-align: center;font-size: xx-large">
-                <span>Итого:</span>
-                <span class="total-price"></span>
-                <span>рублей</span>
-            </p>
+        <div class="text-center py-5">
+            <div class="empty-cart-icon">
+                <ion-icon name="cart-outline"></ion-icon>
+            </div>
+            <h3 class="mb-3">Ваша корзина пуста</h3>
+            <p class="text-muted mb-4">Добавьте товары, чтобы продолжить покупки</p>
+            <a href="/" class="btn btn-primary px-4 py-2">
+                <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon>
+                Вернуться к покупкам
+            </a>
         </div>
-        <a class="btn btn-dark mt-3 mb-3" style="text-align: center; background:#7b63f4;width: 70%; margin-left:15%"
-               data-toggle="collapse" href="/cart" role="button"
-               aria-expanded="true" aria-controls="collapseExample">
-                Оплатить
-        </a>
+    </#if>
 </div>
-<footer class="footer">
-        <ul class="social-icon">
-          <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22">
-              <ion-icon name="logo-vk"></ion-icon>
+
+<#-- Модальное окно для оплаты -->
+<div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Оплата курса</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div id="paymentError" class="alert alert-danger d-none"></div>
+                <p>Вы собираетесь записаться на курс <strong id="modalCourseName"></strong></p>
+                <p>Стоимость: <strong id="modalCoursePrice"></strong></p>
+                <div class="d-grid gap-2">
+                    <#if !user?? || !user.email??>
+                        <button id="LogInToPayBtn" class="btn btn-success">
+                            Войдите, чтобы оплатить
+                        </button>
+                    <#else>
+                        <button id="proceedToPaymentBtn" class="btn btn-success">
+                            Перейти к оплате
+                        </button>
+                    </#if>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer mt-auto">
+    <ul class="social-icon">
+        <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22">
+                <ion-icon name="logo-vk"></ion-icon>
             </a></li>
-          <li class="social-icon__item"><a class="social-icon__link" href="#">
-              <ion-icon name="logo-steam"></ion-icon>
+        <li class="social-icon__item"><a class="social-icon__link" href="#">
+                <ion-icon name="logo-steam"></ion-icon>
             </a></li>
-          <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210">
-              <ion-icon name="logo-whatsapp"></ion-icon>
+        <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210">
+                <ion-icon name="logo-whatsapp"></ion-icon>
             </a></li>
-          <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev">
-              <ion-icon name="logo-instagram"></ion-icon>
+        <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev">
+                <ion-icon name="logo-instagram"></ion-icon>
             </a></li>
-        </ul>
-        <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
+    </ul>
+    <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
 </footer>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgR323Vzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+<script src="/scripts/cartDetails.js"></script>
 </body>
 </html>

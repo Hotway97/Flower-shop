@@ -4,23 +4,18 @@ import com.example.flowers.models.User;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
-    @Autowired
-    private final UserService userService;
 
-    @Autowired
+    private final UserService userService;
     private final ProductService productService;
 
     @GetMapping("/login")
@@ -30,15 +25,14 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    public String profile(Principal principal,
+    public String profile(@AuthenticationPrincipal User user,
                           Model model) {
-        User user = userService.getUserByPrincipal(principal);
         model.addAttribute("user", user);
         return "profile";
     }
+
     @GetMapping("/info")
-    public String info(Principal principal, Model model) {
-        User user = userService.getUserByPrincipal(principal);
+    public String info(@AuthenticationPrincipal User user, Model model) {
         model.addAttribute("user", user);
         return "info";
     }
@@ -48,7 +42,6 @@ public class UserController {
         model.addAttribute("user", userService.getUserByPrincipal(principal));
         return "registration";
     }
-
 
     @PostMapping("/registration")
     public String createUser(User user, Model model) {
@@ -60,24 +53,12 @@ public class UserController {
     }
 
     @GetMapping("/user/{user}")
-    public String userInfo(@PathVariable("user") User user, Model model, Principal principal) {
+    public String userInfo(@PathVariable("user") User user,
+                           Model model,
+                           @AuthenticationPrincipal User currentUser) {
         model.addAttribute("user", user);
-        model.addAttribute("userByPrincipal", userService.getUserByPrincipal(principal));
+        model.addAttribute("userByPrincipal", currentUser);
         model.addAttribute("products", user.getProducts());
         return "user-info";
     }
-
-    @GetMapping("/cart")
-    public String showCart(
-            @AuthenticationPrincipal User user,
-            Model model
-    ) {
-        if (user != null) {
-            model.addAttribute("cart_list", user.getCart());
-        } else {
-            model.addAttribute("message", "Вы не вошли!");
-        }
-        return "cart";
-    }
-
 }

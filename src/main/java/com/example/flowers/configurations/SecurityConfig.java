@@ -31,17 +31,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Отключаем CSRF для статичных ресурсов, чатов, ollama и webhook'ов
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers(
                                 "/static/**",
                                 "/images/**",
                                 "/api/chats/**",
-                                "/api/ollama"
+                                "/api/ollama",
+                                "/payments/webhook",
+                                "/api/payments/webhook"
                         )
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/chat").authenticated() // Защищаем конкретный путь
+                        // Эндпоинты для webhook должны быть доступны без аутентификации
+                        .requestMatchers("/payments/webhook", "/api/payments/webhook").permitAll()
+                        // Разрешаем доступ для публичных ресурсов
                         .requestMatchers(
                                 "/",
                                 "/chat",
@@ -54,9 +59,16 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/static/**"
                         ).permitAll()
+                        // Остальные правила (пример)
+                        .requestMatchers("/api/chat").authenticated()
+                        .requestMatchers("/cart/**").authenticated()
                         .requestMatchers("/api/chats/**").authenticated()
                         .requestMatchers("/api/ollama").permitAll()
-                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/api/orders/**").permitAll()
+                        // Обратите внимание: правило .requestMatchers("/api/**").permitAll() очень широкое,
+                        // убедитесь, что оно соответствует вашим требованиям.
+                        .requestMatchers("/api/**").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
                         .loginPage("/login")
@@ -75,7 +87,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8080"));
+        // Объединяем допустимые Origins в одном вызове
+        config.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://flowershop.loca.lt"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);

@@ -1,76 +1,88 @@
 package com.example.flowers.controllers;
 
+import com.example.flowers.models.Cart;
 import com.example.flowers.models.Product;
 import com.example.flowers.models.User;
+import com.example.flowers.services.CartService;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Objects;
-
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+@RequestMapping("/cart")
+@RequiredArgsConstructor
 public class CartController {
 
     private final ProductService productService;
     private final UserService userService;
+    private final CartService cartService;
 
-    public CartController(ProductService productService, UserService userService) {
-        this.productService = productService;
-        this.userService = userService;
+    @GetMapping
+    public String showCart(@AuthenticationPrincipal User user, Model model) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("user", user);
+        model.addAttribute("cart", user.getCart());
+        return "cart";
     }
 
-    @PostMapping("/cart/add/{id}")
+    @PostMapping("/add/{id}")
     public String addToCart(@AuthenticationPrincipal User user,
-                            @PathVariable(name = "id") Long id,
-                            Model model
-    ) {
-        if (user == null){
+                            @PathVariable Long id,
+                            Model model) {
+        if (user == null) {
             return "redirect:/login";
         }
         try {
             Product product = productService.getProduct(id);
-            if (!user.getCart().contains(product)) {
-                List<Product> cart = user.getCart();
-                cart.add(product);
-                user.setTotalprice(user.getTotalprice()+ product.getPrice());
+            Cart cart = user.getCart();
+            if (cart == null) {
+                cart = new Cart();
+                cart.setUser(user);
+                user.setCart(cart);
                 userService.update(user);
             }
+            cartService.addProductToCart(cart, product);
             return "redirect:/";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", "Ошибка!");
+            model.addAttribute("message", "Ошибка добавления товара в корзину");
             return "main";
         }
     }
 
-    @PostMapping("/cart/remove/{id}")
-    public String remove(
-            @PathVariable(name = "id") Long id,
-            @AuthenticationPrincipal User user,
-            Model model
-    ) {
+    @PostMapping("/remove/{id}")
+    public String removeFromCart(@AuthenticationPrincipal User user,
+                                 @PathVariable Long id,
+                                 Model model) {
         try {
             Product product = productService.getProduct(id);
-            List<Product> cart = user.getCart();
-            for (Product p: cart){
-                if (p.getId() == product.getId()){
-                    cart.remove(cart.indexOf(p));
-                    break;
-                }
+            Cart cart = user.getCart();
+            if (cart != null) {
+                cartService.removeProductFromCart(cart, product);
             }
-            userService.update(user);
             return "redirect:/cart";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("message", "Ошибка!");
+            model.addAttribute("message", "Ошибка удаления товара из корзины");
             return "main";
         }
+    }
+
+    @PostMapping("/checkout")
+    public String checkout(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        Cart cart = user.getCart();
+        if (cart != null) {
+            // Здесь можно добавить логику оформления заказа
+            //cartService.clearCart(cart);
+        }
+//        return "redirect:/cart?success";
+        return "redirect:/cart";
     }
 }

@@ -1,0 +1,161 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+* {
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+/* Основной фон навбара */
+.my {
+    background-color: #ff35c2 !important;
+    position: relative;
+    z-index: 10;
+}
+
+/* Логотип и цвет текста */
+.navbar-brand {
+    color: white !important;
+}
+.navbar-brand:hover {
+    color: #f0f0f0 !important;
+    text-decoration: none;
+}
+
+/* Автоматический отступ вправо для нав-элементов */
+.navbar-nav {
+    margin-left: auto;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    margin-left: auto;
+}
+
+.menu > li {
+    margin: 0 1rem;
+}
+
+/* Кнопка-бургер */
+.menu-button-container {
+    display: none;
+    cursor: pointer;
+    height: 100%;
+    width: 30px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 40px;
+}
+
+#menu-toggle {
+    display: none;
+}
+
+.menu-button,
+.menu-button::before,
+.menu-button::after {
+    display: block;
+    background-color: #fff;
+    position: absolute;
+    height: 4px;
+    width: 30px;
+    transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 2px;
+    content: '';
+}
+
+.menu-button::before {
+    margin-top: -8px;
+}
+.menu-button::after {
+    margin-top: 8px;
+}
+
+#menu-toggle:checked + .menu-button-container .menu-button::before {
+    margin-top: 0;
+    transform: rotate(405deg);
+}
+#menu-toggle:checked + .menu-button-container .menu-button {
+    background: transparent;
+}
+#menu-toggle:checked + .menu-button-container .menu-button::after {
+    margin-top: 0;
+    transform: rotate(-405deg);
+}
+
+/* Стили для ссылок */
+.nav-link {
+    color: white !important;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+.nav-link:hover {
+    color: #ffc8f0 !important;
+    text-decoration: none;
+}
+
+/* Стиль бейджа */
+.badge-light {
+    background-color: #ffffff !important;
+    color: #333 !important;
+}
+
+/* Аватар */
+.dropdown img {
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+/* Медиа-адаптация */
+@media (max-width: 992px) {
+    .menu-button-container {
+        display: flex;
+    }
+
+    .menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        background-color: #ff35c2;
+        padding: 0;
+        display: none;
+        z-index: 100;
+    }
+
+    #menu-toggle:checked ~ .menu {
+        display: flex !important;
+    }
+
+    .menu > li {
+        width: 100%;
+        text-align: center;
+        padding: 0.75em 0;
+        margin: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.3); /* <-- Вот эта строка добавляет тонкую разделяющую полоску */
+    }
+
+    .menu > li:first-child {
+        border-top: none;
+    }
+
+    .nav-link {
+        padding: 0;
+        width: 100%;
+    }
+}
+
+

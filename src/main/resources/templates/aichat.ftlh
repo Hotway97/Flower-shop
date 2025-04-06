@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>Персональный помощник</title>
     <link rel="stylesheet" href="/static/css/aistyle.css">
+    <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/footer.css">
 </head>
 <body>
 <h1>Персональный помощник</h1>

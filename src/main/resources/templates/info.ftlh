@@ -8,6 +8,7 @@
         <link rel="stylesheet" href="/static/css/style.css">
         <link rel="stylesheet" href="/static/css/about.css">
         <link rel="stylesheet" href="/static/css/footer.css">
+        <link rel="stylesheet" href="/static/css/navbar.css">
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
 

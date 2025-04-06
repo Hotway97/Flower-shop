@@ -1,0 +1,83 @@
+.product-card {
+    transition: transform 0.3s !important;
+}
+.product-card:hover {
+    transform: scale(1.03) !important;
+}
+
+.empty-cart-icon {
+    font-size: 5rem !important;
+    color: #7b63f4 !important;
+    margin-bottom: 1rem !important;
+}
+
+.checkout-btn {
+    background-color: #7b63f4 !important;
+    border: none !important;
+    padding: 12px 0 !important;
+    font-size: 1.2rem !important;
+    color: white !important;
+}
+.checkout-btn:hover {
+    background-color: #6a52e3 !important;
+}
+
+.cart-item {
+    display: flex !important;
+    align-items: center !important;
+    padding: 15px !important;
+    border-bottom: 1px solid #eee !important;
+}
+.cart-item img {
+    width: 100px !important;
+    height: 100px !important;
+    object-fit: cover !important;
+    border-radius: 5px !important;
+    margin-right: 15px !important;
+}
+.cart-item-details {
+    flex-grow: 1 !important;
+}
+.cart-item-quantity {
+    display: flex !important;
+    align-items: center !important;
+}
+.cart-item-quantity button {
+    width: 35px !important;
+    height: 35px !important;
+}
+.cart-item-quantity span {
+    margin: 0 10px !important;
+    font-size: 1.1rem !important;
+    min-width: 30px !important;
+    text-align: center !important;
+}
+
+.modal-close-btn {
+    color: #000 !important;
+    opacity: 0.75 !important;
+    transition: opacity 0.2s !important;
+    border: none !important;
+    background: none !important;
+    padding: 0.25rem !important;
+    width: 1.75rem !important;
+    height: 1.75rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.modal-close-btn:hover {
+    opacity: 1 !important;
+    color: #000 !important;
+    background-color: rgba(0,0,0,0.05) !important;
+}
+
+.btn-outline-secondary {
+    color: black !important;
+    border-color: black !important;
+}
+.btn-outline-secondary:hover {
+    color: white !important;
+    background-color: black !important;
+    border-color: black !important;
+}

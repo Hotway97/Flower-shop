@@ -4,65 +4,47 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Добавляем метатеги CSRF -->
     <meta name="_csrf" content="${_csrf.token}"/>
     <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <title>Корзина | Flowers shop</title>
     <style>
-        .product-card {
-            transition: transform 0.3s;
-        }
-        .product-card:hover {
-            transform: scale(1.03);
-        }
-        .empty-cart-icon {
-            font-size: 5rem;
-            color: #7b63f4;
-            margin-bottom: 1rem;
-        }
+        .product-card { transition: transform 0.3s; }
+        .product-card:hover { transform: scale(1.03); }
+        .empty-cart-icon { font-size: 5rem; color: #7b63f4; margin-bottom: 1rem; }
         .checkout-btn {
             background-color: #7b63f4;
             border: none;
             padding: 12px 0;
             font-size: 1.2rem;
+            color: white;
         }
-        .checkout-btn:hover {
-            background-color: #6a52e3;
+        .checkout-btn:hover { background-color: #6a52e3; }
+        .cart-item { display: flex; align-items: center; padding: 15px; border-bottom: 1px solid #eee; }
+        .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; margin-right: 15px; }
+        .cart-item-details { flex-grow: 1; }
+        .cart-item-quantity { display: flex; align-items: center; }
+        .cart-item-quantity button { width: 35px; height: 35px; }
+        .cart-item-quantity span { margin: 0 10px; font-size: 1.1rem; min-width: 30px; text-align: center; }
+        .modal-close-btn {
+            color: #000;
+            opacity: 0.75;
+            transition: opacity 0.2s;
+            border: none;
+            background: none;
+            padding: 0.25rem;
+            width: 1.75rem;
+            height: 1.75rem;
         }
-        /* Стили для элементов корзины */
-        .cart-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+        .modal-close-btn:hover {
+            opacity: 1;
+            color: #000;
+            background-color: rgba(0,0,0,0.05);
         }
-        .cart-item img {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 5px;
-            margin-right: 15px;
-        }
-        .cart-item-details {
-            flex-grow: 1;
-        }
-        .cart-item-quantity {
-            display: flex;
-            align-items: center;
-        }
-        .cart-item-quantity button {
-            width: 35px;
-            height: 35px;
-        }
-        .cart-item-quantity span {
-            margin: 0 10px;
-            font-size: 1.1rem;
-            min-width: 30px;
-            text-align: center;
-        }
+
     </style>
 </head>
 <body data-user-id="${user.id}">
@@ -76,15 +58,9 @@
             <div class="menu-button"></div>
         </label>
         <ul class="menu">
-            <li class="nav-item">
-                <a class="nav-link mx-2" style="color:white" href="/">Главная</a>
-            </li>
-            <li class="nav-item1">
-                <a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a>
-            </li>
+            <li class="nav-item"><a class="nav-link mx-2" style="color:white" href="/">Главная</a></li>
+            <li class="nav-item1"><a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a></li>
+            <li class="nav-item"><a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a></li>
             <li class="nav-item">
                 <a class="nav-link mx-2" style="color:white" href="/cart">
                     Корзина
@@ -103,9 +79,7 @@
                 </#if>
             </div>
         <#else>
-            <button class="btn btn-light my-2 my-sm-0" type="button" onclick="window.location.href = '/login'">
-                Войти
-            </button>
+            <button class="btn btn-light my-2 my-sm-0" onclick="window.location.href = '/login'">Войти</button>
         </#if>
     </div>
 </nav>
@@ -127,14 +101,12 @@
                         <div class="cart-item-details">
                             <h5 class="mb-1">${item.product.title}</h5>
                             <p class="mb-1 text-muted">${item.product.description}</p>
-                            <p class="mb-0 text-primary">Цена: ${item.product.price} ₽</p>
                         </div>
                         <div class="cart-item-quantity">
                             <button class="btn btn-outline-secondary btn-minus" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">–</button>
                             <span class="quantity" data-cartitem-id="${item.id}">${item.quantity}</span>
                             <button class="btn btn-outline-secondary btn-plus" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">+</button>
                         </div>
-                        <!-- Элемент для удаления всех единиц товара -->
                         <div class="remove-all-btn ml-3" data-url="/cart/item/removeAll/${item.id}">
                             <button type="button" class="btn btn-outline-danger">
                                 <ion-icon name="trash-outline"></ion-icon>
@@ -161,9 +133,7 @@
                             <h5 class="mb-0">Общая сумма:</h5>
                             <h5 class="mb-0 text-primary">${user.cart.totalPrice} ₽</h5>
                         </div>
-                        <button id="enrollBtn" type="button" class="btn checkout-btn btn-block btn-lg">
-                            Оформить заказ
-                        </button>
+                        <button id="enrollBtn" class="btn checkout-btn btn-block btn-lg">Оформить заказ</button>
                     </div>
                 </div>
             </div>
@@ -176,56 +146,79 @@
             <h3 class="mb-3">Ваша корзина пуста</h3>
             <p class="text-muted mb-4">Добавьте товары, чтобы продолжить покупки</p>
             <a href="/" class="btn btn-primary px-4 py-2">
-                <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon>
-                Вернуться к покупкам
+                <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon>Вернуться к покупкам
             </a>
         </div>
     </#if>
 </div>
 
-<!-- Модальное окно для оплаты -->
+<style>
+    .modal-close-btn {
+        color: #000;
+        opacity: 0.75;
+        transition: opacity 0.2s;
+        border: none;
+        background: none;
+        padding: 0.25rem;
+        line-height: 1;
+        width: 1.75rem;
+        height: 1.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-close-btn:hover {
+        opacity: 1;
+        color: #000;
+        background-color: rgba(0,0,0,0.05);
+    }
+    .checkout-btn, .btn-outline-secondary {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        font-size: 1rem;
+    }
+</style>
+
+<<!-- Модальное окно -->
+<!-- Модальное окно -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Оплата заказа</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-center w-100 font-weight-bold">Оформление заказа</h5>
+                <button type="button" class="modal-close-btn position-absolute" style="top: 1rem; right: 1rem;" data-bs-dismiss="modal" aria-label="Закрыть">
+                    <i class="bi bi-x" style="font-size: 1.5rem;"></i>
+                </button>
             </div>
-            <div class="modal-body text-center">
+            <div class="modal-body">
                 <div id="paymentError" class="alert alert-danger d-none"></div>
-                <p>Вы собираетесь оформить заказ <strong id="modalOrderName"></strong></p>
-                <p>Стоимость: <strong id="modalOrderPrice"></strong></p>
-                <div class="d-grid gap-2">
+                <p style="font-weight: bold;" id="modalOrderName">Состав заказа:</p>
+                <div id="modalProductList" class="mb-3"></div>
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <p style="font-weight: bold;">Сумма к оплате:</p>
+                    <p style="font-weight: bold;" id="modalOrderPrice">${user.cart.totalPrice} ₽</p>
+                </div>
+                <div class="d-grid gap-2 mt-4">
                     <#if !user?? || !user.email??>
-                        <button id="LogInToPayBtn" class="btn btn-success">
-                            Войдите, чтобы оплатить
-                        </button>
+                        <button id="LogInToPayBtn" class="btn checkout-btn btn-block py-2">Войдите, чтобы оплатить</button>
                     <#else>
-                        <button id="proceedToPaymentBtn" class="btn btn-success">
-                            Перейти к оплате
-                        </button>
+                        <button id="proceedToPaymentBtn" class="btn checkout-btn btn-block py-2">Перейти к оплате</button>
                     </#if>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="button" class="btn btn-outline-secondary btn-block py-2 mt-2" data-bs-dismiss="modal">Отмена</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
+
 <footer class="footer mt-auto">
     <ul class="social-icon">
-        <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22">
-                <ion-icon name="logo-vk"></ion-icon>
-            </a></li>
-        <li class="social-icon__item"><a class="social-icon__link" href="#">
-                <ion-icon name="logo-steam"></ion-icon>
-            </a></li>
-        <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210">
-                <ion-icon name="logo-whatsapp"></ion-icon>
-            </a></li>
-        <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev">
-                <ion-icon name="logo-instagram"></ion-icon>
-            </a></li>
+        <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
+        <li class="social-icon__item"><a class="social-icon__link" href="#"><ion-icon name="logo-steam"></ion-icon></a></li>
+        <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>
+        <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev"><ion-icon name="logo-instagram"></ion-icon></a></li>
     </ul>
     <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
 </footer>

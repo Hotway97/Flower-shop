@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
 
-    // 🔁 Если корзина была оплачена — очищаем DOM и отправляем запрос
     if (localStorage.getItem('cartPaid') === 'true') {
         localStorage.removeItem('cartPaid');
         const userId = document.body.dataset.userId;
@@ -20,24 +19,27 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Модалка для оформления заказа
     const enrollBtn = document.getElementById('enrollBtn');
     const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
 
     if (enrollBtn) {
         enrollBtn.addEventListener('click', function (e) {
             e.preventDefault();
-            paymentModal.show();
-            document.getElementById('modalOrderName').textContent = 'Ваш заказ';
-            document.getElementById('modalOrderPrice').textContent =
-                document.querySelector('.text-primary').textContent;
-        });
-    }
 
-    const logInToPayBtn = document.getElementById('LogInToPayBtn');
-    if (logInToPayBtn) {
-        logInToPayBtn.addEventListener('click', function () {
-            window.location.href = '/login';
+            const cartItems = document.querySelectorAll('.cart-item');
+
+            // Формируем список товаров
+            const productListHtml = Array.from(cartItems).map(item => {
+                const title = item.querySelector('.cart-item-details h5').textContent.trim();
+                const quantity = item.querySelector('.quantity').textContent.trim();
+                return `<div>${title} (${quantity} шт.)</div>`;
+            }).join('');
+
+            document.getElementById('modalProductList').innerHTML = productListHtml;
+            const totalText = document.querySelector('.text-primary')?.textContent || '0 ₽';
+            document.getElementById('modalOrderPrice').textContent = totalText;
+
+            paymentModal.show();
         });
     }
 
@@ -95,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Удаление всех единиц товара
     $(document).on('click', '.remove-all-btn', function (e) {
         e.preventDefault();
         const url = $(this).data('url');
@@ -115,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Кнопка +
     $(document).on('click', '.btn-plus', function (e) {
         e.preventDefault();
         const cartItemId = $(this).data('cartitem-id');
@@ -134,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Кнопка -
     $(document).on('click', '.btn-minus', function (e) {
         e.preventDefault();
         const cartItemId = $(this).data('cartitem-id');
@@ -153,7 +152,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // 👉 Очистка корзины на фронте
     function clearCartUI() {
         document.querySelectorAll('.cart-item').forEach(item => item.remove());
 
@@ -169,7 +167,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const emptyCartBlock = document.querySelector('.text-center.py-5');
         if (emptyCartBlock) emptyCartBlock.classList.remove('d-none');
 
-        // 🧹 Убираем data-cartitem-id, чтобы кнопки не вызывали ошибки
         document.querySelectorAll('[data-cartitem-id]').forEach(el => {
             el.removeAttribute('data-cartitem-id');
         });

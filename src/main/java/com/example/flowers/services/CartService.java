@@ -20,8 +20,8 @@ public class CartService {
 
     @Transactional
     public void addProductToCart(Cart cart, Product product) {
-        // Получаем актуальную корзину с чистым состоянием
-        Cart freshCart = cartRepository.findById(cart.getId()).orElseThrow();
+        Cart freshCart = cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
 
         boolean found = false;
         for (CartItem item : freshCart.getCartItems()) {
@@ -46,20 +46,26 @@ public class CartService {
 
     @Transactional
     public void increaseCartItem(Cart cart, Long cartItemId) {
-        CartItem foundItem = cart.getCartItems()
+        Cart freshCart = cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        CartItem foundItem = freshCart.getCartItems()
                 .stream()
                 .filter(item -> item.getId().equals(cartItemId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("CartItem not found in current cart"));
 
         foundItem.setQuantity(foundItem.getQuantity() + 1);
-        cart.calculateTotalPrice();
-        cartRepository.save(cart);
+        freshCart.calculateTotalPrice();
+        cartRepository.save(freshCart);
     }
 
     @Transactional
     public void decreaseCartItem(Cart cart, Long cartItemId) {
-        Optional<CartItem> optionalItem = cart.getCartItems().stream()
+        Cart freshCart = cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        Optional<CartItem> optionalItem = freshCart.getCartItems().stream()
                 .filter(item -> item.getId().equals(cartItemId))
                 .findFirst();
 
@@ -69,43 +75,41 @@ public class CartService {
         if (item.getQuantity() > 1) {
             item.setQuantity(item.getQuantity() - 1);
         } else {
-            cart.getCartItems().remove(item);
+            freshCart.getCartItems().remove(item);
             cartItemRepository.delete(item);
         }
 
-        cart.calculateTotalPrice();
-        cartRepository.save(cart);
+        freshCart.calculateTotalPrice();
+        cartRepository.save(freshCart);
     }
 
     @Transactional
     public void removeAllCartItem(Cart cart, Long cartItemId) {
-        Optional<CartItem> item = cart.getCartItems().stream()
+        Cart freshCart = cartRepository.findById(cart.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
+
+        Optional<CartItem> item = freshCart.getCartItems().stream()
                 .filter(i -> i.getId().equals(cartItemId))
                 .findFirst();
 
         item.ifPresent(cartItem -> {
-            cart.getCartItems().remove(cartItem);
+            freshCart.getCartItems().remove(cartItem);
             cartItemRepository.delete(cartItem);
         });
 
-        cart.calculateTotalPrice();
-        cartRepository.save(cart);
+        freshCart.calculateTotalPrice();
+        cartRepository.save(freshCart);
     }
 
     @Transactional
     public void clearCartByUserId(Long userId) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart != null) {
-            // Удаляем все CartItem из базы
             for (CartItem item : cart.getCartItems()) {
                 cartItemRepository.delete(item);
             }
-
-            // Очищаем список и обнуляем total
             cart.getCartItems().clear();
             cart.setTotalPrice(0);
-
-            // Сохраняем очищенную корзину
             cartRepository.save(cart);
         }
     }

@@ -33,7 +33,11 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Заказ может содержать несколько позиций (OrderItem)
+    // Заказ может содержать несколько позиций (OrderProduct)
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderProduct> orderProducts = new ArrayList<>();
+
+    // Новое поле для хранения суммы заказа (totalAmount)
+    @Column(name = "total_amount", nullable = false)
+    private Long totalAmount;
 }

@@ -7,11 +7,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-
     <title>Flowers shop</title>
+    <style>
+        /* Стили для блока заказов */
+        .order-card .order-number {
+            font-weight: bold;
+        }
+        .order-card .order-total {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        /* Дополнительные отступы для карточки */
+        .order-card {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark my">
@@ -48,8 +61,7 @@
 <hr>
 <br>
 <div style="text-align: center; height:100%">
-    <img src="/static/images/avatar.png"
-         style="border:2px solid black; border-radius: 20px" height="120">
+    <img src="/static/images/avatar.png" style="border:2px solid black; border-radius: 20px" height="120">
     <br><br>
     <h2>${user.name}</h2>
     <br>
@@ -65,13 +77,13 @@
             <a href="/" class="btn btn-outline-primary">Искать товары</a>
         </div>
 
-        <!-- Контейнер для товаров -->
+        <!-- Контейнер для карточек заказов -->
         <div class="row g-4" id="productsContainer"></div>
 
-        <!-- Заглушка, если товаров нет -->
+        <!-- Заглушка, если заказов нет -->
         <div id="noProductsPlaceholder" class="text-center py-5 bg-light rounded d-none">
             <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-            <h4>Вы еще не оформили ни 1 заказ</h4>
+            <h4>Вы еще не оформили ни одного заказа</h4>
             <p class="text-muted">Найдите подходящий товар!</p>
             <a href="/" class="btn btn-primary mt-2">Перейти к товарам</a>
         </div>

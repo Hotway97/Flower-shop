@@ -1,9 +1,12 @@
-<#import "/spring.ftl" as spring />
+<#import "/spring.ftl" as spring>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Добавляем метатеги CSRF -->
+    <meta name="_csrf" content="${_csrf.token}"/>
+    <meta name="_csrf_header" content="${_csrf.headerName}"/>
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
@@ -29,17 +32,48 @@
         .checkout-btn:hover {
             background-color: #6a52e3;
         }
+        /* Стили для элементов корзины */
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .cart-item img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+        .cart-item-details {
+            flex-grow: 1;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+        }
+        .cart-item-quantity button {
+            width: 35px;
+            height: 35px;
+        }
+        .cart-item-quantity span {
+            margin: 0 10px;
+            font-size: 1.1rem;
+            min-width: 30px;
+            text-align: center;
+        }
     </style>
 </head>
-<body>
+<body data-user-id="${user.id}">
 <nav class="navbar navbar-expand-lg navbar-dark my">
     <div class="container-fluid">
         <a class="navbar-brand" href="/">
             <span class="navbar-brand mb-0 h1">Flowers shop</span>
         </a>
         <input id="menu-toggle" type="checkbox">
-        <label class='menu-button-container' for="menu-toggle">
-            <div class='menu-button'></div>
+        <label class="menu-button-container" for="menu-toggle">
+            <div class="menu-button"></div>
         </label>
         <ul class="menu">
             <li class="nav-item">
@@ -54,13 +88,12 @@
             <li class="nav-item">
                 <a class="nav-link mx-2" style="color:white" href="/cart">
                     Корзина
-                    <#if user?? && user.cart?? && user.cart.products?size gt 0>
-                        <span class="badge badge-light ml-1">${user.cart.products?size}</span>
+                    <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
+                        <span class="badge badge-light ml-1">${user.cart.cartItems?size}</span>
                     </#if>
                 </a>
             </li>
         </ul>
-
         <#if user?? && user.email??>
             <div class="dropdown text-end">
                 <#if user.avatar??>
@@ -70,8 +103,7 @@
                 </#if>
             </div>
         <#else>
-            <button class="btn btn-light my-2 my-sm-0" type="button"
-                    onclick="window.location.href = '/login'">
+            <button class="btn btn-light my-2 my-sm-0" type="button" onclick="window.location.href = '/login'">
                 Войти
             </button>
         </#if>
@@ -81,46 +113,47 @@
 <div class="container mt-4 mb-5">
     <h1 class="text-center mb-4">Ваша корзина</h1>
 
-    <#if user?? && user.cart?? && user.cart.products?has_content>
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Товары</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <#list user.cart.products as product>
-                            <div class="d-flex align-items-center p-3 border-bottom" data-product-id="${product.id}">
-                                <a href="/product/${product.id}" class="mr-3">
-                                    <img src="/images/${product.previewImageId}"
-                                         class="img-fluid rounded"
-                                         style="width: 100px; height: 100px; object-fit: cover;">
-                                </a>
-                                <div class="flex-grow-1">
-                                    <h5 class="mb-1">${product.title}</h5>
-                                    <p class="mb-1 text-muted">${product.description}</p>
-                                    <h5 class="mb-0 text-primary">${product.price} ₽</h5>
-                                </div>
-                                <form action="/cart/remove/${product.id}" method="post">
-                                    <input type="hidden" name="_csrf" value="${_csrf.token}"/>
-                                    <button type="submit" class="btn btn-outline-danger">
-                                        <ion-icon name="trash-outline"></ion-icon>
-                                    </button>
-                                </form>
-                            </div>
-                        </#list>
-                    </div>
-                </div>
+    <#if user?? && user.cart?? && user.cart.cartItems?has_content>
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Товары</h5>
             </div>
+            <div class="card-body p-0">
+                <#list user.cart.cartItems as item>
+                    <div class="cart-item" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">
+                        <a href="/product/${item.product.id}" class="mr-3">
+                            <img src="/images/${item.product.previewImageId}" alt="${item.product.title}">
+                        </a>
+                        <div class="cart-item-details">
+                            <h5 class="mb-1">${item.product.title}</h5>
+                            <p class="mb-1 text-muted">${item.product.description}</p>
+                            <p class="mb-0 text-primary">Цена: ${item.product.price} ₽</p>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <button class="btn btn-outline-secondary btn-minus" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">–</button>
+                            <span class="quantity" data-cartitem-id="${item.id}">${item.quantity}</span>
+                            <button class="btn btn-outline-secondary btn-plus" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">+</button>
+                        </div>
+                        <!-- Элемент для удаления всех единиц товара -->
+                        <div class="remove-all-btn ml-3" data-url="/cart/item/removeAll/${item.id}">
+                            <button type="button" class="btn btn-outline-danger">
+                                <ion-icon name="trash-outline"></ion-icon>
+                            </button>
+                        </div>
+                    </div>
+                </#list>
+            </div>
+        </div>
 
-            <div class="col-lg-4">
+        <div class="row">
+            <div class="col-lg-4 offset-lg-8">
                 <div class="card shadow-sm">
                     <div class="card-header bg-dark text-white">
                         <h5 class="mb-0">Итого</h5>
                     </div>
                     <div class="card-body">
                         <div class="d-flex justify-content-between mb-3">
-                            <span>Товары (${user.cart.products?size}):</span>
+                            <span>Товары (${user.cart.cartItems?size}):</span>
                             <span>${user.cart.totalPrice} ₽</span>
                         </div>
                         <hr>
@@ -150,18 +183,18 @@
     </#if>
 </div>
 
-<#-- Модальное окно для оплаты -->
+<!-- Модальное окно для оплаты -->
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Оплата курса</h5>
+                <h5 class="modal-title">Оплата заказа</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
                 <div id="paymentError" class="alert alert-danger d-none"></div>
-                <p>Вы собираетесь записаться на курс <strong id="modalCourseName"></strong></p>
-                <p>Стоимость: <strong id="modalCoursePrice"></strong></p>
+                <p>Вы собираетесь оформить заказ <strong id="modalOrderName"></strong></p>
+                <p>Стоимость: <strong id="modalOrderPrice"></strong></p>
                 <div class="d-grid gap-2">
                     <#if !user?? || !user.email??>
                         <button id="LogInToPayBtn" class="btn btn-success">

@@ -61,10 +61,11 @@ public class SecurityConfig {
                         ).permitAll()
                         // Остальные правила (пример)
                         .requestMatchers("/api/chat").authenticated()
-                        .requestMatchers("/cart/**").authenticated()
+                        .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/api/chats/**").authenticated()
                         .requestMatchers("/api/ollama").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
+                        .requestMatchers("/cart/**").permitAll()
                         // Обратите внимание: правило .requestMatchers("/api/**").permitAll() очень широкое,
                         // убедитесь, что оно соответствует вашим требованиям.
                         .requestMatchers("/api/**").permitAll()

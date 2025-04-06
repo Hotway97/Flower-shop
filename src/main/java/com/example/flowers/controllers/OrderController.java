@@ -11,11 +11,9 @@ import com.example.flowers.repositories.ProductRepository;
 import com.example.flowers.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,36 +65,23 @@ public class OrderController {
         return ResponseEntity.ok(userOrders);
     }
 
-    // Создать новый заказ
+    // Создать новый заказ. Здесь используется user_id, переданный в теле запроса.
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderDTO dto) {
         Order order = new Order();
         order.setStatus(dto.getStatus());
 
-        // Загружаем пользователя из базы данных
-        User user;
         if (dto.getUserId() == null) {
-            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String email;
-            if (auth.getPrincipal() instanceof UserDetails) {
-                email = ((UserDetails) auth.getPrincipal()).getUsername();
-            } else {
-                email = auth.getPrincipal().toString();
-            }
-            user = userRepository.findByEmail(email);
-            if (user == null) {
-                throw new RuntimeException("User not found with email: " + email);
-            }
-        } else {
-            user = userRepository.findById(dto.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
+            return ResponseEntity.badRequest().body("user_id is required");
         }
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден с id: " + dto.getUserId()));
         order.setUser(user);
 
-        // Обработка списка productIds
+        // Обработка списка product_ids
         List<Long> productIds = dto.getProductIds();
         if (productIds == null || productIds.isEmpty()) {
-            throw new RuntimeException("No products provided for the order");
+            throw new RuntimeException("Не предоставлены товары для заказа");
         }
 
         // Группируем идентификаторы продуктов и считаем количество каждого
@@ -112,12 +97,12 @@ public class OrderController {
             Integer quantity = entry.getValue().intValue();
 
             Product product = productRepository.findById(productId)
-                    .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+                    .orElseThrow(() -> new RuntimeException("Продукт не найден с id: " + productId));
 
-            // Получаем цену продукта (предполагается, что метод возвращает цену в рублях или копейках)
+            // Получаем цену продукта
             Long price = productRepository.findPriceById(productId);
             if (price == null || price <= 0) {
-                throw new RuntimeException("У продукта не установлена корректная цена для product id: " + productId);
+                throw new RuntimeException("Некорректная цена для продукта с id: " + productId);
             }
             totalAmount += price * quantity;
 
@@ -132,14 +117,14 @@ public class OrderController {
         }
 
         order.setOrderProducts(orderProducts);
-        Order savedOrder = orderRepository.save(order);
+        order.setTotalAmount(totalAmount);
+        orderRepository.save(order);
 
         String description = "Оплата продуктов: " + String.join(", ", productNames);
-        String paymentUrl = createYooKassaPayment(savedOrder.getId(), totalAmount, description);
-
+        String paymentUrl = createYooKassaPayment(order.getId(), totalAmount, description);
 
         return ResponseEntity.ok(Map.of(
-                "orderId", savedOrder.getId(),
+                "orderId", order.getId(),
                 "paymentUrl", paymentUrl
         ));
     }

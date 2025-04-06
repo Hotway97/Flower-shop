@@ -55,21 +55,48 @@ public class CartController {
         }
     }
 
-    @PostMapping("/remove/{id}")
-    public String removeFromCart(@AuthenticationPrincipal User user,
-                                 @PathVariable Long id,
-                                 Model model) {
-        try {
-            Product product = productService.getProduct(id);
-            Cart cart = user.getCart();
-            if (cart != null) {
-                cartService.removeProductFromCart(cart, product);
-            }
-            return "redirect:/cart";
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("message", "Ошибка удаления товара из корзины");
-            return "main";
+    @PostMapping("/item/increase/{cartItemId}")
+    public String increaseCartItem(@AuthenticationPrincipal User user,
+                                   @PathVariable Long cartItemId) {
+        if (user == null) {
+            return "redirect:/login";
         }
+        Cart cart = user.getCart();
+        if (cart != null) {
+            cartService.increaseCartItem(cart, cartItemId);
+        }
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/item/decrease/{cartItemId}")
+    public String decreaseCartItem(@AuthenticationPrincipal User user,
+                                   @PathVariable Long cartItemId) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        Cart cart = user.getCart();
+        if (cart != null) {
+            cartService.decreaseCartItem(cart, cartItemId);
+        }
+        return "redirect:/cart";
+    }
+
+    @PostMapping("/item/removeAll/{cartItemId}")
+    public String removeAllCartItem(@AuthenticationPrincipal User user,
+                                    @PathVariable Long cartItemId) {
+        if (user == null) {
+            return "redirect:/login";
+        }
+        Cart cart = user.getCart();
+        if (cart != null) {
+            cartService.removeAllCartItem(cart, cartItemId);
+            // Получаем свежего пользователя из базы, чтобы обновить корзину (избегаем stale references)
+            User freshUser = userService.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + user.getId()));
+
+            user.setCart(freshUser.getCart());
+        }
+        return "redirect:/cart";
     }
 
     @PostMapping("/checkout")
@@ -79,10 +106,9 @@ public class CartController {
         }
         Cart cart = user.getCart();
         if (cart != null) {
-            // Здесь можно добавить логику оформления заказа
-            //cartService.clearCart(cart);
+            // Здесь можно добавить логику оформления заказа, например, перевод корзины в заказ
+            // cartService.clearCart(cart);
         }
-//        return "redirect:/cart?success";
         return "redirect:/cart";
     }
 }

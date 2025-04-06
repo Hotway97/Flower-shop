@@ -11,6 +11,7 @@ public class OrderResponseDTO {
     private LocalDateTime createdAt;
     private Long userId;
     private List<OrderProductResponseDTO> orderProducts;
+    private Long totalAmount;
 
     public OrderResponseDTO() {}
 
@@ -20,47 +21,51 @@ public class OrderResponseDTO {
         this.createdAt = order.getCreatedAt();
         this.userId = order.getUser().getId();
         this.orderProducts = order.getOrderProducts().stream()
-                .map(item -> new OrderProductResponseDTO(item.getProduct().getId(), item.getQuantity()))
+                .map(item -> new OrderProductResponseDTO(
+                        item.getProduct().getId(),
+                        item.getProduct().getTitle(),     // Наименование товара
+                        item.getProduct().getPrice(),     // Цена товара
+                        item.getQuantity()))
                 .collect(Collectors.toList());
+        this.totalAmount = order.getTotalAmount();
     }
+
+    // Геттеры и сеттеры...
 
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
-
     public Long getUserId() {
         return userId;
     }
-
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-
     public List<OrderProductResponseDTO> getOrderProducts() {
         return orderProducts;
     }
-
     public void setOrderProducts(List<OrderProductResponseDTO> orderProducts) {
         this.orderProducts = orderProducts;
+    }
+    public Long getTotalAmount() {
+        return totalAmount;
+    }
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
     }
 }

@@ -25,8 +25,20 @@
                    </label>
                    <ul class="menu">
                      <li class="nav-item1">
-                       <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/info">Главная</a>
-                     </li>
+                       <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/info">Каталог</a>
+                       <li class="nav-item">
+                           <a class="nav-link mx-2" style="color:white" href="/cart">
+                               Корзина
+                               <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
+                                   <#assign totalQuantity = 0>
+                                   <#list user.cart.cartItems as item>
+                                       <#assign totalQuantity += item.quantity>
+                                   </#list>
+                                   <span class="badge badge-light ml-1">${totalQuantity}</span>
+                               </#if>
+                           </a>
+                       </li>
+                       </li>
                      <li class="nav-item1">
                         <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/info">О нас</a>
                      </li>

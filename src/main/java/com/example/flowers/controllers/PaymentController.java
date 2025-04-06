@@ -24,17 +24,13 @@ public class PaymentController {
 
         // 2. Достаем объект платежа
         Map<String, Object> payment = (Map<String, Object>) notification.get("object");
-        System.out.println(payment + "Testim");
         // 3. Извлекаем ключевые данные
         String paymentId = (String) payment.get("id");
         String status = (String) payment.get("status");
         boolean paid = (Boolean) payment.get("paid");
-        System.out.println(payment + "Testim");
         // 4. Обрабатываем метаданные (если есть)
         Map<String, Object> metadata = (Map<String, Object>) payment.get("metadata");
         Long orderId = metadata != null ? Long.valueOf(metadata.get("orderId").toString()) : null;
-        System.out.println(orderId + "Testim");
-
         // 5. Логика обработки
         if ("payment.succeeded".equals(eventType)) {
             orderService.confirmPayment(orderId);

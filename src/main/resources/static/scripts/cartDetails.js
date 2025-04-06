@@ -1,14 +1,31 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Получаем CSRF-токен и имя заголовка из метатегов
+document.addEventListener('DOMContentLoaded', function () {
     const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute("content");
     const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute("content");
 
-    // Обработчик для кнопки оформления заказа
+    // 🔁 Если корзина была оплачена — очищаем DOM и отправляем запрос
+    if (localStorage.getItem('cartPaid') === 'true') {
+        localStorage.removeItem('cartPaid');
+        const userId = document.body.dataset.userId;
+
+        $.ajax({
+            url: `/cart/clear/${userId}`,
+            method: 'POST',
+            headers: { [csrfHeader]: csrfToken },
+            success: function () {
+                clearCartUI();
+            },
+            error: function (xhr, status, error) {
+                console.error('Ошибка при очистке корзины:', error);
+            }
+        });
+    }
+
+    // Модалка для оформления заказа
     const enrollBtn = document.getElementById('enrollBtn');
     const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
 
     if (enrollBtn) {
-        enrollBtn.addEventListener('click', function(e) {
+        enrollBtn.addEventListener('click', function (e) {
             e.preventDefault();
             paymentModal.show();
             document.getElementById('modalOrderName').textContent = 'Ваш заказ';
@@ -17,15 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработчик кнопки "Войдите, чтобы оплатить"
     const logInToPayBtn = document.getElementById('LogInToPayBtn');
     if (logInToPayBtn) {
-        logInToPayBtn.addEventListener('click', function() {
+        logInToPayBtn.addEventListener('click', function () {
             window.location.href = '/login';
         });
     }
 
-    // Обработчик кнопки "Перейти к оплате"
     const proceedToPaymentBtn = document.getElementById('proceedToPaymentBtn');
     if (proceedToPaymentBtn) {
         proceedToPaymentBtn.addEventListener('click', function () {
@@ -40,9 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Получаем userId из <body data-user-id="...">
             const userId = document.body.dataset.userId;
-
             const originalText = proceedToPaymentBtn.innerHTML;
             proceedToPaymentBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Обработка...';
             proceedToPaymentBtn.disabled = true;
@@ -60,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     user_id: userId
                 }),
                 success: function (response) {
-                    console.log('Order created:', response);
                     if (response.paymentUrl) {
+                        localStorage.setItem('cartPaid', 'true');
                         window.location.href = response.paymentUrl;
                     }
                 },
@@ -82,8 +95,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Обработчик для кнопки удаления всех единиц товара
-    $(document).on('click', '.remove-all-btn', function(e) {
+    // Удаление всех единиц товара
+    $(document).on('click', '.remove-all-btn', function (e) {
         e.preventDefault();
         const url = $(this).data('url');
         $.ajax({
@@ -92,18 +105,18 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 [csrfHeader]: csrfToken
             },
-            success: function(response) {
+            success: function () {
                 location.reload();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Ошибка при удалении товара:', error);
                 alert('Ошибка при удалении товара');
             }
         });
     });
 
-    // Кнопка + для увеличения количества товара
-    $(document).on('click', '.btn-plus', function(e) {
+    // Кнопка +
+    $(document).on('click', '.btn-plus', function (e) {
         e.preventDefault();
         const cartItemId = $(this).data('cartitem-id');
         $.ajax({
@@ -112,17 +125,17 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 [csrfHeader]: csrfToken
             },
-            success: function() {
+            success: function () {
                 location.reload();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Ошибка при увеличении количества товара:', error);
             }
         });
     });
 
-    // Кнопка – для уменьшения количества товара
-    $(document).on('click', '.btn-minus', function(e) {
+    // Кнопка -
+    $(document).on('click', '.btn-minus', function (e) {
         e.preventDefault();
         const cartItemId = $(this).data('cartitem-id');
         $.ajax({
@@ -131,12 +144,34 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: {
                 [csrfHeader]: csrfToken
             },
-            success: function() {
+            success: function () {
                 location.reload();
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 console.error('Ошибка при уменьшении количества товара:', error);
             }
         });
     });
+
+    // 👉 Очистка корзины на фронте
+    function clearCartUI() {
+        document.querySelectorAll('.cart-item').forEach(item => item.remove());
+
+        const totalTextElems = document.querySelectorAll('.text-primary, .text-muted, h5.mb-0.text-primary');
+        totalTextElems.forEach(el => el.textContent = '0 ₽');
+
+        const cartHeader = document.querySelector('h1');
+        if (cartHeader) cartHeader.textContent = 'Ваша корзина пуста';
+
+        const checkoutSection = document.querySelector('.card.shadow-sm');
+        if (checkoutSection) checkoutSection.remove();
+
+        const emptyCartBlock = document.querySelector('.text-center.py-5');
+        if (emptyCartBlock) emptyCartBlock.classList.remove('d-none');
+
+        // 🧹 Убираем data-cartitem-id, чтобы кнопки не вызывали ошибки
+        document.querySelectorAll('[data-cartitem-id]').forEach(el => {
+            el.removeAttribute('data-cartitem-id');
+        });
+    }
 });

@@ -7,6 +7,7 @@ import com.example.flowers.services.CartService;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,8 +27,13 @@ public class CartController {
         if (user == null) {
             return "redirect:/login";
         }
-        model.addAttribute("user", user);
-        model.addAttribute("cart", user.getCart());
+
+        // ✅ Загружаем свежего пользователя из базы
+        User freshUser = userService.findById(user.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        model.addAttribute("user", freshUser);
+        model.addAttribute("cart", freshUser.getCart());
         return "cart";
     }
 
@@ -90,10 +96,9 @@ public class CartController {
         Cart cart = user.getCart();
         if (cart != null) {
             cartService.removeAllCartItem(cart, cartItemId);
-            // Получаем свежего пользователя из базы, чтобы обновить корзину (избегаем stale references)
+            // 🔄 Загружаем свежую корзину
             User freshUser = userService.findById(user.getId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + user.getId()));
-
             user.setCart(freshUser.getCart());
         }
         return "redirect:/cart";
@@ -106,9 +111,14 @@ public class CartController {
         }
         Cart cart = user.getCart();
         if (cart != null) {
-            // Здесь можно добавить логику оформления заказа, например, перевод корзины в заказ
-            // cartService.clearCart(cart);
+            // Здесь может быть логика оформления заказа
         }
         return "redirect:/cart";
+    }
+
+    @PostMapping("/clear/{userId}")
+    public ResponseEntity<Void> clearCart(@PathVariable Long userId) {
+        cartService.clearCartByUserId(userId);
+        return ResponseEntity.ok().build();
     }
 }

@@ -57,6 +57,7 @@
             <li class="nav-item1">
                 <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/info">О нас</a>
             </li>
+            <li class="nav-item1"> <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/chat">Ассистент</a></li>
         </ul>
         <#if user.email??>
             <div class="dropdown text-end">

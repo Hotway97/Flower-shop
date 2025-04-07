@@ -39,6 +39,7 @@
             <li class="nav-item1">
                 <a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a>
             </li>
+            <li class="nav-item1"> <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/chat">Ассистент</a></li>
             <li class="nav-item">
                 <a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a>
             </li>
@@ -47,10 +48,6 @@
             <div class="dropdown text-end">
                 <img src="/static/images/avatar.png" alt="mdo" width="32" height="32" class="rounded-circle">
             </div>
-        <#else>
-            <button class="btn btn-light my-2 my-sm-0" onclick="window.location.href = '/login'">
-                Войти
-            </button>
         </#if>
     </div>
 </nav>

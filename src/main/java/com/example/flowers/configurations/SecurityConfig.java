@@ -36,8 +36,8 @@ public class SecurityConfig {
                         .ignoringRequestMatchers(
                                 "/static/**",
                                 "/images/**",
-                                "/api/chats/**",
-                                "/api/ollama",
+                                "/chats/**",
+                                "/ollama",
                                 "/payments/webhook",
                                 "/api/payments/webhook"
                         )
@@ -49,7 +49,6 @@ public class SecurityConfig {
                         // Разрешаем доступ для публичных ресурсов
                         .requestMatchers(
                                 "/",
-                                "/chat",
                                 "/product/**",
                                 "/images/**",
                                 "/registration",
@@ -60,10 +59,10 @@ public class SecurityConfig {
                                 "/static/**"
                         ).permitAll()
                         // Остальные правила (пример)
-                        .requestMatchers("/api/chat").authenticated()
+                        .requestMatchers("/chat").authenticated()
                         .requestMatchers("/cart/**").permitAll()
-                        .requestMatchers("/api/chats/**").authenticated()
-                        .requestMatchers("/api/ollama").permitAll()
+                        .requestMatchers("/chats/**").authenticated()
+                        .requestMatchers("/ollama").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers("/cart/**").permitAll()
                         // Обратите внимание: правило .requestMatchers("/api/**").permitAll() очень широкое,

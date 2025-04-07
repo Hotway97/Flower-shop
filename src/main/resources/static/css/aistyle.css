@@ -1,73 +1,72 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+html, body {
     margin: 0;
     padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f9;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    overflow-x: hidden;
 }
-h1 {
-    color: #333;
-    margin-top: 20px;
-}
-#chatForm {
+
+/* Обёртка */
+.chat-wrapper {
+    flex: 1 1 auto;
     display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background-color: white;
-    padding: 10px;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 50%; /* Ширина контейнера формы */
-    margin-left: auto; /* Центрируем контейнер */
-    margin-right: auto; /* Центрируем контейнер */
-    border-radius: 20px; /* Скругление углов */
+    flex-direction: column;
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px 0;
+    min-height: calc(100vh - 200px);
 }
 
-#userInput {
-    width: 100%; /* Поле ввода занимает всю доступную ширину внутри контейнера */
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
+/* Заголовок + кнопка */
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.chat-header h1 {
+    text-align: center;
+    flex: 1;
+    font-size: 2rem;
+    margin: 0;
 }
 
-
-button {
-    padding: 10px 10px;
-    font-size: 16px;
-    background-color: #007bff;
+/* Кнопка очистки */
+#clearChatBtn {
+    background: #7b63f4;
     color: white;
+    padding: 0.5rem 1rem;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    white-space: nowrap;
 }
-button:hover {
-    background-color: #0056b3;
+#clearChatBtn:hover {
+    background-color: #5e4ad8;
 }
+
+/* Чат */
 #chat {
-    width: 100%;
-    max-width: 600px;
-    background-color: white;
+    background: white;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 80px; /* Отступ для формы ввода */
+    height: 80vh;               /* фиксированная высота */
     overflow-y: auto;
-    flex-grow: 1;
+    margin-bottom: 10px;
 }
+
+/* Сообщения */
 .message {
-    margin-bottom: 15px;
+    margin-bottom: 1rem;
 }
 .user-message {
-    color: #007bff;
+    color: #7b63f4;
 }
 .ai-message {
     color: #333;
@@ -76,54 +75,57 @@ button:hover {
     color: #888;
     font-style: italic;
 }
-
-/* Панель слева */
-#sidePanel {
-    position: fixed;
-    top: 0;
-    left: -250px; /* Панель скрыта по умолчанию */
-    width: 250px;
-    height: 100%;
-    background-color: #fff;
-    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    padding-top: 60px;
-    transition: left 0.3s ease;
-    z-index: 999;
+.ai-message.error {
+    color: red;
 }
 
-#sidePanel.open {
-    left: 0;
+/* Форма ввода */
+#chatForm {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 0;
+    padding-bottom: 0.25rem;
 }
-#sidePanel h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
+#chatForm input {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
 }
-#sidePanel ul {
-    list-style: none;
-    padding: 0;
-}
-#sidePanel ul li {
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-#sidePanel ul li:hover {
-    color: #007bff;
-}
-
-/* Кнопка для открытия панели */
-#sidePanelToggle {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background-color: #007bff;
+#chatForm button {
+    background: #7b63f4;
     color: white;
+    padding: 0.5rem 1rem;
     border: none;
-    padding: 10px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 20px;
+    border-radius: 6px;
     cursor: pointer;
-    z-index: 1001;
+}
+#chatForm button:hover {
+    background-color: #5e4ad8;
+}
+
+/* Футер */
+footer.footer {
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+/* Адаптивность */
+@media (max-width: 767px) {
+    .chat-wrapper {
+        width: 100%;
+        padding: 20px 10px;
+    }
+    .chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .chat-header h1 {
+        font-size: 1.5rem;
+        text-align: left;
+    }
 }

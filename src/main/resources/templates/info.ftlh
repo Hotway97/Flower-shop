@@ -40,6 +40,7 @@
                               </#if>
                           </a>
                       </li>
+                      <li class="nav-item1"> <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/chat">Ассистент</a></li>
                       <li class="nav-item">
                         <a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a>
                     </li>

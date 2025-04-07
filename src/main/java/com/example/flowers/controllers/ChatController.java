@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/chats")
+@RequestMapping("/chats")
 public class ChatController {
 
     private final ChatRepository chatRepository;

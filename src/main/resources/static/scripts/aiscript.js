@@ -7,28 +7,27 @@ $(document).ready(function() {
     // Получение списка чатов
     function fetchChats() {
         $.ajax({
-            url: '/api/chats',
+            url: '/chats',
             method: 'GET',
             dataType: 'json',
             success: function(chats) {
                 $('#chatList').empty();
-                let hasChats = false;
 
                 if (chats?.id) {
-                    hasChats = true;
                     $('#chatList').append(`
-                        <li class="chatItem" data-id="${chats.id}">
-                            ${chats.chatName}
-                            <button class="clearHistoryBtn">Очистить историю</button>
-                        </li>
-                    `);
-                }
+                    <li class="chatItem selected" data-id="${chats.id}">
+                        ${chats.chatName}
+                        <button class="clearHistoryBtn">Очистить историю</button>
+                    </li>
+                `);
 
-                if (!hasChats) {
+                    // Сразу загружаем сообщения
+                    loadChatMessages(chats.id);
+                    updateCreateButtonVisibility(true);
+                } else {
                     $('#chatList').append('<li>Нет доступных чатов</li>');
+                    updateCreateButtonVisibility(false);
                 }
-
-                updateCreateButtonVisibility(hasChats);
             },
             error: function(xhr) {
                 $('#chatList').html('<li>Ошибка загрузки</li>');
@@ -36,10 +35,11 @@ $(document).ready(function() {
         });
     }
 
+
     // Создание нового чата
     $('#createChatBtn').on('click', function() {
         $.ajax({
-            url: '/api/chats',
+            url: '/chats',
             method: 'POST',
             contentType: 'application/json',
             dataType: 'json',
@@ -58,7 +58,7 @@ $(document).ready(function() {
         const chatId = $(this).parent().data('id');
         if (confirm("Очистить историю сообщений?")) {
             $.ajax({
-                url: `/api/chats/${chatId}/messages`,
+                url: `/chats/${chatId}/messages`,
                 method: 'DELETE',
                 success: function() {
                     $('#response').empty();
@@ -83,7 +83,7 @@ $(document).ready(function() {
     function loadChatMessages(chatId) {
         $('#response').empty();
         $.ajax({
-            url: `/api/chats/${chatId}/messages`,
+            url: `/chats/${chatId}/messages`,
             method: 'GET',
             success: function(messages) {
                 messages.forEach(msg => {
@@ -133,7 +133,7 @@ $(document).ready(function() {
             <div class="message loading">ИИ печатает...</div>
         `);
 
-        fetch(`/api/ollama?chatId=${chatId}&input=${encodeURIComponent(message)}`, {
+        fetch(`/ollama?chatId=${chatId}&input=${encodeURIComponent(message)}`, {
             method: 'POST'
         })
             .then(response => processAIResponse(response))
@@ -159,6 +159,12 @@ $(document).ready(function() {
             });
         }
         read();
+    }
+
+    // Скроллим вниз, когда сообщение приходит
+    function scrollToBottom() {
+        const container = document.getElementById("response");
+        container.scrollTop = container.scrollHeight;
     }
 
     // Обработка ошибок ИИ

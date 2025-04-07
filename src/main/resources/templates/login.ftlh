@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/login.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
-    <title>Flowers shop</title>
+    <title>Вход | Flowers shop</title>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark my">
@@ -21,28 +22,11 @@
             <div class='menu-button'></div>
         </label>
         <ul class="menu">
-            <li class="nav-item1">
-                <a class="nav-link mx-2 active" style="color:white" href="/">Каталог</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link mx-2" style="color:white" href="/cart">
-                    Корзина
-                    <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
-                        <#assign totalQuantity = 0>
-                        <#list user.cart.cartItems as item>
-                            <#assign totalQuantity += item.quantity>
-                        </#list>
-                        <span class="badge badge-light ml-1">${totalQuantity}</span>
-                    </#if>
-                </a>
-            </li>
-            <li class="nav-item1">
-                <a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a>
-            </li>
-            <li class="nav-item1"> <a class="nav-link mx-2 active" style="color:white" aria-current="page" href="/chat">Ассистент</a></li>
-            <li class="nav-item">
-                <a class="nav-link mx-2" style="color:white" href="/profile">Профиль</a>
-            </li>
+            <li class="nav-item1"><a class="nav-link mx-2 active" href="/">Каталог</a></li>
+            <li class="nav-item"><a class="nav-link mx-2" href="/cart">Корзина</a></li>
+            <li class="nav-item1"><a class="nav-link mx-2 active" href="/info">О нас</a></li>
+            <li class="nav-item1"><a class="nav-link mx-2 active" href="/chat">Ассистент</a></li>
+            <li class="nav-item"><a class="nav-link mx-2" href="/profile">Профиль</a></li>
         </ul>
         <#if user?? && user.email??>
             <div class="dropdown text-end">
@@ -51,35 +35,38 @@
         </#if>
     </div>
 </nav>
-<div class="container mt-4">
-    <h1 class="text-center">Авторизация</h1>
-    <hr>
-    <form action="/login" method="post" style="width:60%;margin:auto;">
-        <div class="form-group">
-            <label for="email">Электронная почта</label>
-            <input type="email" class="form-control <#if error??>is-invalid</#if>" id="email" name="username" required>
-            <#if error??>
-                <div class="invalid-feedback">Неверная электронная почта</div>
-            </#if>
-        </div>
-        <div class="form-group">
-            <label for="password">Пароль</label>
-            <input type="password" class="form-control <#if error??>is-invalid</#if>" id="password" name="password" required>
-            <#if error??>
-                <div class="invalid-feedback">Неверный пароль</div>
-            </#if>
-        </div>
 
-        <#if _csrf??>
-            <input type="hidden" name="_csrf" value="${_csrf.token}">
-        </#if>
+<main class="login-container">
+    <div class="login-box">
+        <h2>Авторизация</h2>
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label for="email">Электронная почта</label>
+                <input type="email" class="form-control <#if error??>is-invalid</#if>" id="email" name="username" required>
+                <#if error??>
+                    <div class="invalid-feedback">Неверная электронная почта</div>
+                </#if>
+            </div>
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input type="password" class="form-control <#if error??>is-invalid</#if>" id="password" name="password" required>
+                <#if error??>
+                    <div class="invalid-feedback">Неверный пароль</div>
+                </#if>
+            </div>
 
-        <button type="submit" class="btn btn-dark w-100" style="background:#7b63f4">Войти</button>
-    </form>
-    <hr>
-    <h2 class="text-center">Нет аккаунта? <a href="/registration">Зарегистрируйтесь!</a></h2>
-</div>
-<footer class="footer">
+            <#if _csrf??>
+                <input type="hidden" name="_csrf" value="${_csrf.token}">
+            </#if>
+
+            <button type="submit" class="btn login-btn">Войти</button>
+        </form>
+        <hr>
+        <p class="text-center">Нет аккаунта? <a href="/registration">Зарегистрируйтесь!</a></p>
+    </div>
+</main>
+
+<footer class="footer mt-auto">
     <ul class="social-icon">
         <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
         <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>
@@ -88,6 +75,7 @@
     </ul>
     <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
 </footer>
+
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>

@@ -1,86 +1,89 @@
-.product-card {
-    transition: transform 0.3s !important;
-}
-.product-card:hover {
-    transform: scale(1.03) !important;
+/* cart.css */
+
+/* --------- ОСНОВНАЯ СТРУКТУРА --------- */
+html, body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-.empty-cart-icon {
-    font-size: 5rem !important;
-    color: #7b63f4 !important;
-    margin-bottom: 1rem !important;
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+footer.footer {
+    margin-top: auto;
+}
+
+/* --------- БАЗОВЫЕ СТИЛИ --------- */
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    flex-wrap: wrap;
+}
+
+.cart-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.cart-item-details {
+    flex-grow: 1;
+    min-width: 180px;
+}
+
+.cart-item-quantity {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.cart-item-quantity button {
+    width: 35px;
+    height: 35px;
+}
+
+.cart-item-quantity span {
+    font-size: 1.1rem;
+    min-width: 30px;
+    text-align: center;
 }
 
 .checkout-btn {
-    background-color: #7b63f4 !important;
-    border: none !important;
-    padding: 12px 0 !important;
-    font-size: 1.2rem !important;
-    color: white !important;
+    background-color: #7b63f4;
+    border: none;
+    padding: 12px 0;
+    font-size: 1.2rem;
+    color: white;
+    width: 100%;
 }
+
 .checkout-btn:hover {
-    background-color: #6a52e3 !important;
+    background-color: #6a52e3;
 }
 
-.cart-item {
-    display: flex !important;
-    align-items: center !important;
-    padding: 15px !important;
-    border-bottom: 1px solid #eee !important;
-}
-.cart-item img {
-    width: 100px !important;
-    height: 100px !important;
-    object-fit: cover !important;
-    border-radius: 5px !important;
-    margin-right: 15px !important;
-}
-.cart-item-details {
-    flex-grow: 1 !important;
-}
-.cart-item-quantity {
-    display: flex !important;
-    align-items: center !important;
-}
-.cart-item-quantity button {
-    width: 35px !important;
-    height: 35px !important;
-}
-.cart-item-quantity span {
-    margin: 0 10px !important;
-    font-size: 1.1rem !important;
-    min-width: 30px !important;
-    text-align: center !important;
+.empty-cart-icon {
+    font-size: 5rem;
+    color: #7b63f4;
+    margin-bottom: 1rem;
 }
 
-.modal-close-btn {
-    color: #000 !important;
-    opacity: 0.75 !important;
-    transition: opacity 0.2s !important;
-    border: none !important;
-    background: none !important;
-    padding: 0.25rem !important;
-    width: 1.75rem !important;
-    height: 1.75rem !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-.modal-close-btn:hover {
-    opacity: 1 !important;
-    color: #000 !important;
-    background-color: rgba(0,0,0,0.05) !important;
+.remove-all-btn {
+    margin-left: 1rem;
 }
 
-.btn-outline-secondary {
-    color: black !important;
-    border-color: black !important;
-}
-.btn-outline-secondary:hover {
-    color: white !important;
-    background-color: black !important;
-    border-color: black !important;
-}
 .modal-close-btn {
     display: flex;
     align-items: center;
@@ -97,4 +100,55 @@
 
 .modal-close-btn:hover {
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --------- АДАПТИВНОСТЬ --------- */
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .cart-item img {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+
+    .cart-item-quantity {
+        margin-top: 10px;
+    }
+
+    .remove-all-btn {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+    .checkout-btn {
+        font-size: 1.25rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .cart-item-details h5 {
+        font-size: 1.2rem;
+    }
+
+    .checkout-btn {
+        font-size: 1.3rem;
+        padding: 14px 0;
+    }
+}
+
+@media (min-width: 1920px) {
+    .cart-item img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .checkout-btn {
+        font-size: 1.4rem;
+        padding: 16px 0;
+    }
 }

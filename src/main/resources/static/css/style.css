@@ -4,11 +4,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.product-link {
-    color: #ff8400 !important;
-    text-decoration: none;
-}
-
 .carousel-caption {
     height: 380px;
     bottom: 0 !important;

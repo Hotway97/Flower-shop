@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="/static/css/footer.css">
     <link rel="stylesheet" href="/static/css/navbar.css">
+    <link rel="stylesheet" href="/static/css/products.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
     <title>Flowers shop</title>
 </head>
@@ -55,50 +56,54 @@
     </div>
 </nav>
 
-<div class="container mt-4">
-    <h1 style="text-align: center">Поиск товаров</h1>
-    <hr>
-    <form method="get" action="/">
-        <div class="form-row" style="width: 100%">
-            <div class="form-group" style="width: 100%">
-                <label class="label1" style="width: 70%" for="searchWord">Поиск по названию</label>
-                <input class="input1" style="width: 70%" type="text" name="searchWord"
-                       <#if searchWord??>value="${searchWord}"</#if>
-                       class="form-control" id="searchWord">
-            </div>
-            <button style="background-color: #7b63f4;width: 70%;margin-left: 15%;" type="submit"
-                    class="btn btn-dark">Поиск
-            </button>
-        </div>
-    </form>
-    <hr>
-
-    <div class="card-columns">
-        <#list products as product>
-            <a href="/product/${product.id}" class="product-link">
-                <div class="card text-white bg-dark my-3 product">
-                    <img src="/images/${product.previewImageId}" class="card-img-top">
-                    <div class="card-body" style="text-align: center;">
-                        <h5 class="card-title">${product.title}</h5>
-                        <p class="card-price">${product.price} ₽</p>
-                        <p class="card-text">${product.description}</p>
-                        <form action="/cart/add/${product.id}" method="post" style="text-align: center;">
-                            <input type="hidden" name="_csrf"
-                                   value="<#if _csrf??>${_csrf.token}<#else></#if>"/>
-                            <button type="submit" class="btn btn-light my-2 my-sm-0" style="background-color: #7b63f4; color: white">
-                                Добавить в корзину
-                            </button>
-                        </form>
-                    </div>
+<main class="products-wrapper">
+    <div class="container mt-4">
+        <h1 class="text-center">Каталог товаров</h1>
+        <hr>
+        <form method="get" action="/">
+            <div class="form-row">
+                <div class="form-group col-12 col-md-8 mx-auto text-center">
+                    <label for="searchWord" class="w-100">Поиск по названию</label>
+                    <input type="text" class="form-control" name="searchWord" id="searchWord"
+                           <#if searchWord??>value="${searchWord}"</#if>>
                 </div>
-            </a>
-        <#else>
-            <h1 style="text-align: center">Не найдено</h1>
-        </#list>
-    </div>
-</div>
+                <div class="form-group col-12 col-md-8 mx-auto text-center">
+                    <button type="submit" class="btn mt-2 w-100" style="background-color: #7b63f4; color: white; border: none;">
+                        Поиск
+                    </button>
+                </div>
+            </div>
+        </form>
+        <hr>
 
-<footer class="footer">
+        <div class="row">
+            <#list products as product>
+                <div class="col-sm-12 col-md-6 col-lg-4 mb-4 d-flex">
+                    <a href="/product/${product.id}" class="product-link w-100">
+                        <div class="card text-white bg-dark h-100">
+                            <img src="/images/${product.previewImageId}" class="card-img-top">
+                            <div class="card-body text-center">
+                                <h5 class="card-title">${product.title}</h5>
+                                <p class="card-price">${product.price} ₽</p>
+                                <p class="card-text">${product.description}</p>
+                                <form action="/cart/add/${product.id}" method="post">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token!}"/>
+                                    <button type="submit" class="btn btn-light" style="background-color: #7b63f4; color: white">
+                                        Добавить в корзину
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <#else>
+                <h1 class="text-center">Не найдено</h1>
+            </#list>
+        </div>
+    </div>
+</main>
+
+<footer class="footer mt-auto">
     <ul class="social-icon">
         <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
         <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>

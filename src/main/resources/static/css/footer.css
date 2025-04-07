@@ -2,23 +2,24 @@
     position: relative;
     width: 100%;
     background: #ff35c2;
-    min-height: 100px;
     padding: 1rem 0;
     margin-top: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    flex-shrink: 0;
+    text-align: center;
 }
 
 .social-icon,
 .menu1 {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 10px 0;
     flex-wrap: wrap;
+    gap: 10px;
 }
 
 .social-icon__item,
@@ -29,10 +30,10 @@
 .social-icon__link {
     font-size: 2rem;
     color: #fff;
-    margin: 0 10px;
     display: inline-block;
     transition: 0.5s;
 }
+
 .social-icon__link:hover {
     transform: translateY(-10px);
 }
@@ -54,7 +55,32 @@
 
 .footer p {
     color: #fff;
-    margin: 15px 0 10px 0;
+    margin: 10px 15px;
     font-size: 1rem;
     font-weight: 300;
+    word-break: break-word;
+    max-width: 95%;
+}
+
+/* ---------- Адаптивность ---------- */
+@media (max-width: 768px) {
+    .social-icon__link {
+        font-size: 1.7rem;
+    }
+
+    .footer p {
+        font-size: 0.9rem;
+        margin: 10px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .social-icon__link {
+        font-size: 1.5rem;
+    }
+
+    .footer p {
+        font-size: 0.85rem;
+        margin: 10px 10px;
+    }
 }

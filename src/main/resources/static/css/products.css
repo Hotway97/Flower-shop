@@ -1,0 +1,88 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+}
+
+.product-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.product-link:hover {
+    text-decoration: none;
+    color: inherit;
+}
+
+.page-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.btn-primary {
+    background-color: #7b63f4;
+    border-color: #7b63f4;
+}
+.btn-primary:hover {
+    background-color: #5e4ad8;
+    border-color: #5e4ad8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .card-img-top {
+        height: 160px;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1440px) {
+    .page-wrapper {
+        max-width: 1400px;
+    }
+    .card-img-top {
+        height: 220px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .page-wrapper {
+        max-width: 1600px;
+    }
+    .card-img-top {
+        height: 260px;
+    }
+}

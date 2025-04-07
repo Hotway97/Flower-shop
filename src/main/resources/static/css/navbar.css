@@ -11,14 +11,12 @@ html, body {
     height: 100%;
 }
 
-/* Основной фон навбара */
 .my {
     background-color: #ff35c2 !important;
     position: relative;
     z-index: 10;
 }
 
-/* Логотип и цвет текста */
 .navbar-brand {
     color: white !important;
 }
@@ -27,7 +25,6 @@ html, body {
     text-decoration: none;
 }
 
-/* Автоматический отступ вправо для нав-элементов */
 .navbar-nav {
     margin-left: auto;
 }
@@ -45,7 +42,6 @@ html, body {
     margin: 0 1rem;
 }
 
-/* Кнопка-бургер */
 .menu-button-container {
     display: none;
     cursor: pointer;
@@ -94,7 +90,6 @@ html, body {
     transform: rotate(-405deg);
 }
 
-/* Стили для ссылок */
 .nav-link {
     color: white !important;
     font-weight: 500;
@@ -105,19 +100,17 @@ html, body {
     text-decoration: none;
 }
 
-/* Стиль бейджа */
 .badge-light {
     background-color: #ffffff !important;
     color: #333 !important;
 }
 
-/* Аватар */
 .dropdown img {
     border: 2px solid white;
     border-radius: 50%;
 }
 
-/* Медиа-адаптация */
+/* ------- Медиа ------- */
 @media (max-width: 992px) {
     .menu-button-container {
         display: flex;
@@ -131,13 +124,13 @@ html, body {
         flex-direction: column;
         align-items: center;
         background-color: #ff35c2;
-        padding: 0;
-        display: none;
-        z-index: 100;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.4s ease-in-out;
     }
 
     #menu-toggle:checked ~ .menu {
-        display: flex !important;
+        max-height: 500px; /* Достаточно для 4–6 пунктов */
     }
 
     .menu > li {
@@ -145,7 +138,15 @@ html, body {
         text-align: center;
         padding: 0.75em 0;
         margin: 0;
-        border-top: 1px solid rgba(255, 255, 255, 0.3); /* <-- Вот эта строка добавляет тонкую разделяющую полоску */
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #menu-toggle:checked ~ .menu > li {
+        opacity: 1;
+        transform: translateY(0);
     }
 
     .menu > li:first-child {
@@ -155,7 +156,7 @@ html, body {
     .nav-link {
         padding: 0;
         width: 100%;
+        display: block;
+        text-align: center;
     }
 }
-
-

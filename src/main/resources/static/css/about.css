@@ -24,10 +24,27 @@ html {
 }
 
 .about-section {
-  padding: 50px;
-  text-align: center;
-  background-color: #474e5d;
+  padding: 3rem 1rem;
+  background: linear-gradient(to bottom, #ff35c2, #7b63f4);
   color: white;
+  text-align: center;
+  border-top: 1px solid white/* светлая линия-разделитель */
+}
+
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.about-text {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  font-family: 'Poppins', sans-serif;
 }
 
 .container {

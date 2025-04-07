@@ -91,8 +91,8 @@
 
     <#if user?? && user.cart?? && user.cart.cartItems?has_content>
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Товары</h5>
+            <div class="card-header text-dark" style="background-color: white !important;">
+                <h5 class="text-center mb-0">Товары</h5>
             </div>
             <div class="card-body p-0">
                 <#list user.cart.cartItems as item>
@@ -103,6 +103,7 @@
                         <div class="cart-item-details">
                             <h5 class="mb-1">${item.product.title}</h5>
                             <p class="mb-1 text-muted">${item.product.description}</p>
+                            <h5 class="mb-1">${item.product.price} ₽</h5>
                         </div>
                         <div class="cart-item-quantity">
                             <button class="btn btn-outline-secondary btn-minus" data-cartitem-id="${item.id}" data-product-id="${item.product.id}">–</button>
@@ -117,27 +118,12 @@
                     </div>
                 </#list>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="col-lg-4 offset-lg-8">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="mb-0">Итого</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between mb-3">
-                            <span>Товары:</span>
-                            <span>${user.cart.totalPrice} ₽</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between mb-3">
-                            <h5 class="mb-0">Общая сумма:</h5>
-                            <h5 class="mb-0 text-primary">${user.cart.totalPrice} ₽</h5>
-                        </div>
-                        <button id="enrollBtn" class="btn checkout-btn btn-block btn-lg">Оформить заказ</button>
-                    </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <h5 class="mb-0">Общая сумма:</h5>
+                    <h5 class="mb-0 text-primary" style="color: black !important;">${user.cart.totalPrice} ₽</h5>
                 </div>
+                <button id="enrollBtn" class="btn checkout-btn btn-block btn-lg">Оформить заказ</button>
             </div>
         </div>
     <#else>
@@ -158,12 +144,13 @@
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header border-0">
-                <h5 class="modal-title text-center w-100 font-weight-bold">Оформление заказа</h5>
+            <div class="modal-header border-0 justify-content-center position-relative">
+                <h5 class="modal-title text-center font-weight-bold">Оформление заказа</h5>
                 <button type="button" class="modal-close-btn position-absolute" style="top: 1rem; right: 1rem;" data-bs-dismiss="modal" aria-label="Закрыть">
-                    <i class="bi bi-x" style="font-size: 1.5rem;"></i>
+                    <i class="bi bi-x" style="font-size: 1.5rem; display: flex; align-items: center; justify-content: center;"></i>
                 </button>
             </div>
+
             <div class="modal-body">
                 <div id="paymentError" class="alert alert-danger d-none"></div>
                 <p style="font-weight: bold;" id="modalOrderName">Состав заказа:</p>
@@ -188,9 +175,9 @@
 <footer class="footer mt-auto">
     <ul class="social-icon">
         <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
-        <li class="social-icon__item"><a class="social-icon__link" href="#"><ion-icon name="logo-steam"></ion-icon></a></li>
         <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>
         <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev"><ion-icon name="logo-instagram"></ion-icon></a></li>
+        <li class="social-icon__item"><a class="social-icon__link" href="#"><ion-icon name="logo-facebook"></ion-icon></a></li>
     </ul>
     <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
 </footer>

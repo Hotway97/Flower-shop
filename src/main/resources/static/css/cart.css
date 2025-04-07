@@ -81,3 +81,20 @@
     background-color: black !important;
     border-color: black !important;
 }
+.modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+}
+
+.modal-close-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}

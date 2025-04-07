@@ -140,18 +140,10 @@
     </div>
         <footer class="footer">
             <ul class="social-icon">
-              <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22">
-                  <ion-icon name="logo-vk"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="#">
-                  <ion-icon name="logo-steam"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210">
-                  <ion-icon name="logo-whatsapp"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev">
-                  <ion-icon name="logo-instagram"></ion-icon>
-                </a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev"><ion-icon name="logo-instagram"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="#"><ion-icon name="logo-facebook"></ion-icon></a></li>
             </ul>
             <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
         </footer>

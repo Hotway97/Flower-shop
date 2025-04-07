@@ -58,13 +58,15 @@
               </#if>
             </div>
         </nav>
-    <div style="background-color: #ff82d9d9" class="about-section">
-      <h1>О компании Flowers shop </h1>
-      <p>Наш интернет магазин Flowers shop предлагает Вам цветы и флористические услуги только высшего качества.
-         Мы внимательно контролируем процесс создания каждого букета. У нас работает команда
-         профессиональных флористов, которые подберут и составят яркий букет на любой вкус и случай.</p>
-    </div>
 
+    <div class="about-section">
+        <h1 class="about-title">О компании Flowers shop</h1>
+        <p class="about-text">
+            Наш интернет-магазин Flowers shop предлагает Вам цветы и флористические услуги только высшего качества.
+            Мы внимательно контролируем процесс создания каждого букета. У нас работает команда
+            профессиональных флористов, которые подберут и составят яркий букет на любой вкус и случай.
+        </p>
+    </div>
     <h2 style="text-align:center">Наша команда</h2>
     <div class="row">
       <div class="column">
@@ -106,20 +108,13 @@
         </div>
       </div>
     </div>
+
         <footer class="footer">
             <ul class="social-icon">
-              <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22">
-                  <ion-icon name="logo-vk"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="#">
-                  <ion-icon name="logo-steam"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210">
-                  <ion-icon name="logo-whatsapp"></ion-icon>
-                </a></li>
-              <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev">
-                  <ion-icon name="logo-instagram"></ion-icon>
-                </a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="https://vk.com/hotway22"><ion-icon name="logo-vk"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="https://wa.me/79877381210"><ion-icon name="logo-whatsapp"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="http://instagram.com/ilya.alekseev"><ion-icon name="logo-instagram"></ion-icon></a></li>
+                <li class="social-icon__item"><a class="social-icon__link" href="#"><ion-icon name="logo-facebook"></ion-icon></a></li>
             </ul>
             <p>&copy;2025 Алексеев Илья ИКБО-10-21 | Все права зарезервированы</p>
         </footer>

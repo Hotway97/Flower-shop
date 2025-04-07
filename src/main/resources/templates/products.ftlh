@@ -84,7 +84,7 @@
                         <form action="/cart/add/${product.id}" method="post" style="text-align: center;">
                             <input type="hidden" name="_csrf"
                                    value="<#if _csrf??>${_csrf.token}<#else></#if>"/>
-                            <button type="submit" class="btn btn-light my-2 my-sm-0" style="background-color: #d2a5fe;">
+                            <button type="submit" class="btn btn-light my-2 my-sm-0" style="background-color: #7b63f4; color: white">
                                 Добавить в корзину
                             </button>
                         </form>

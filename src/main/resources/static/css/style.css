@@ -1,8 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
 
 .product:hover {
-    transition: 0.5s;
-    transform: scale(1.02);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .product-link {
@@ -25,6 +24,7 @@
 
 .product {
     height: 300px;
+    transition: box-shadow 0.3s ease;
 }
 
 .form-group col-md-11 {
@@ -69,8 +69,9 @@
 }
 
 .card-body {
-    background: linear-gradient(#6d6dff, #de18a5);
+    background: white;
     border-radius: 4px;
+    color: black;
 }
 
 .card-top {

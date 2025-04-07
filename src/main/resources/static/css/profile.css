@@ -1,0 +1,189 @@
+/* Заголовок заказов */
+.profile-orders-header {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+/* Контейнер с прокруткой для карточек заказов */
+.orders-scroll-container {
+    max-height: 670px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd; /*  рамка формы заказов */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+/* Убираем горизонтальный скролл */
+.orders-scroll-container > .row {
+    flex-wrap: wrap;
+    margin-right: 0;
+}
+
+/* Карточки заказов */
+.order-card {
+    margin-bottom: 20px;
+}
+
+/* Внешний вид карточек */
+.order-card .card {
+    border: 1px solid #000; /* чёткая чёрная рамка */
+    border-radius: 6px; /* уменьшенное скругление */
+    box-shadow: none; /* убираем лишнюю тень */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff;
+}
+
+.order-card .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.order-card .card-body {
+    padding: 1.25rem;
+}
+
+/* Стили текста в карточке */
+.order-card .order-number,
+.order-card .order-item,
+.order-card .card-text strong {
+    font-weight: 600;
+}
+
+.order-card .order-total {
+    font-weight: 700; /* вместо 600 */
+    font-size: 1rem;
+    color: #000;
+    -webkit-font-smoothing: antialiased; /* сглаживание */
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transform: none; /* убираем на всякий случай */
+    letter-spacing: 0.2px; /* делаем текст чуть чётче */
+}
+
+.order-card .card-text {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+}
+
+/* Слово "Товары:" жирным */
+.order-card .card-text.products-label {
+    font-weight: 600;
+}
+
+/* Товары: нумерованный список */
+.order-card ol {
+    padding-left: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Заглушка при отсутствии заказов */
+#noProductsPlaceholder {
+    text-align: center;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    border: 1px dashed #ccc;
+}
+
+/* Скролл-стилизация */
+.orders-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+.orders-scroll-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+.orders-scroll-container::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+
+/* Кнопки */
+.formprof .btn,
+.btn-dark,
+.btn-primary,
+.btn-danger {
+    font-size: 1rem;
+    padding: 10px 16px;
+    border-radius: 6px;
+}
+
+/* ------- АДАПТИВНОСТЬ ------- */
+@media (max-width: 992px) {
+    .order-card {
+        width: 100%;
+    }
+    .profile-orders-header {
+        font-size: 1.5rem;
+    }
+    .orders-scroll-container {
+        max-height: 560px;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-orders-header {
+        font-size: 1.3rem;
+    }
+    .orders-scroll-container {
+        max-height: 500px;
+        padding-right: 4px;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-orders-header {
+        font-size: 1.2rem;
+    }
+
+    .formprof .btn,
+    .btn-dark,
+    .btn-primary,
+    .btn-danger {
+        width: 100%;
+        font-size: 0.95rem;
+    }
+
+    .orders-scroll-container {
+        max-height: 460px;
+    }
+
+    .order-card {
+        margin-bottom: 15px;
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+    .orders-scroll-container {
+        max-height: 650px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .orders-scroll-container {
+        max-height: 700px;
+    }
+    .profile-orders-header {
+        font-size: 2rem;
+    }
+}
+
+@media (min-width: 1920px) {
+    .orders-scroll-container {
+        max-height: 750px;
+    }
+
+    .order-card .card-text {
+        font-size: 1.05rem;
+    }
+
+    .formprof .btn {
+        font-size: 1.1rem;
+    }
+}

@@ -18,37 +18,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            console.log("Полученные заказы:", orders);
-
             orders.forEach(order => {
                 let productsHtml = "";
                 if (order.orderProducts && order.orderProducts.length > 0) {
+                    productsHtml = "<ol>";
                     order.orderProducts.forEach(op => {
                         productsHtml += `<li>Наименование: ${op.productTitle}, Цена: ${op.productPrice}, Количество: ${op.quantity}</li>`;
                     });
+                    productsHtml += "</ol>";
                 } else {
-                    productsHtml = `<li>Нет товаров в заказе</li>`;
+                    productsHtml = `<p>Нет товаров в заказе</p>`;
                 }
 
                 const card = document.createElement("div");
                 card.className = "col-md-6 col-lg-4 order-card";
                 card.innerHTML = `
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <p class="order-number">Заказ №${order.id}</p>
-                        <p class="card-text">Статус: ${order.status}</p>
-                        <p class="card-text">Дата заказа: ${new Date(order.createdAt).toLocaleString()}</p>
-                        <p class="card-text">Товары:</p>
-                        <ul>
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <p class="order-number">Заказ №${order.id}</p>
+                            <p class="card-text">Статус: ${order.status}</p>
+                            <p class="card-text">Дата заказа: ${new Date(order.createdAt).toLocaleString()}</p>
+                            <p class="order-item">Товары:</p>
                             ${productsHtml}
-                        </ul>
-                        <p class="order-total">Сумма заказа: ${order.totalAmount} руб.</p>
+                            <p class="order-total">Сумма заказа: ${order.totalAmount} руб.</p>
+                        </div>
                     </div>
-                    <div class="card-footer bg-transparent d-flex justify-content-end">
-                        <a href="/orders/${order.id}" class="btn btn-sm btn-outline-primary">Подробнее</a>
-                    </div>
-                </div>
-            `;
+                `;
                 container.appendChild(card);
             });
         })

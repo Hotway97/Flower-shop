@@ -1,0 +1,68 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f9;
+}
+
+main, .container {
+    flex: 1 0 auto;
+}
+
+/* Убедимся, что футер внизу */
+footer.footer {
+    flex-shrink: 0;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    margin-top: auto;
+}
+
+/* Таблица: адаптивность и стили */
+.table {
+    width: 100%;
+    margin-bottom: 2rem;
+    word-break: break-word;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table th, .table td {
+        font-size: 0.9rem;
+        padding: 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+
+
+/*@media (max-width: 767px) {*/
+/*    table {*/
+/*        font-size: 14px;*/
+/*    }*/
+
+/*    th, td {*/
+/*        white-space: nowrap;*/
+/*    }*/
+/*}*/

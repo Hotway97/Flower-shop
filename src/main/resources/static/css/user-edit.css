@@ -1,0 +1,124 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main container with flexible height */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* убрали лишнее */
+    background-color: #f4f4f9;
+}
+
+/* Оформление формы */
+.edit-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: white;
+    max-width: 400px;
+    width: 100%;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+.edit-wrapper h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.edit-wrapper h2 {
+    font-size: 1.1rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+/* Форма */
+.edit-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Чекбоксы */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.checkbox-label {
+    background: #f8f9fa;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.checkbox-label:hover {
+    background-color: #ececec;
+    border-color: #bbb;
+}
+
+.checkbox-label input[type="checkbox"] {
+    transform: scale(1.2);
+    accent-color: #7b63f4;
+}
+
+/* Кнопка */
+.btn-purple {
+    background-color: #7b63f4;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.btn-purple:hover {
+    background-color: #5e4ad8;
+}
+
+/* Футер */
+footer.footer {
+    margin-top: auto;
+    text-align: center;
+    padding: 1rem 0;
+    color: white;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .edit-wrapper {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .edit-wrapper h1 {
+        font-size: 1.25rem;
+    }
+
+    .edit-wrapper h2 {
+        font-size: 1rem;
+    }
+}

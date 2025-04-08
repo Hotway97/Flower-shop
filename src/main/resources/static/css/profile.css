@@ -106,12 +106,30 @@
 
 /* Кнопки */
 .formprof .btn,
-.btn-dark,
+.btn-purple,
 .btn-primary,
 .btn-danger {
     font-size: 1rem;
     padding: 10px 16px;
     border-radius: 6px;
+}
+
+.btn-purple {
+    background-color: #7b63f4;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.btn-purple:hover {
+    background-color: #5e4ad8;
+}
+
+.order-number {
+    text-align: center;
 }
 
 /* ------- АДАПТИВНОСТЬ ------- */
@@ -143,7 +161,7 @@
     }
 
     .formprof .btn,
-    .btn-dark,
+    .btn-purple,
     .btn-primary,
     .btn-danger {
         width: 100%;

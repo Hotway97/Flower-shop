@@ -70,7 +70,7 @@
 
         <#if user.isAdmin()>
             <a class="btn btn-dark mb-3" style="width: 80%" href="/admin">Панель администратора</a><br>
-            <a class="btn btn-dark mb-3" style="background:#7b63f4; width: 80%;" href="/my/products">Мои цветы</a>
+            <a class="btn btn-purple mb-3" style="width: 80%;" href="/my/products">Мои цветы</a>
         </#if>
 
         <!-- Кнопка выхода -->

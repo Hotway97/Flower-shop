@@ -1,87 +1,45 @@
 $(document).ready(function () {
-    // Функция для обновления видимости кнопки
-    function updateCreateButtonVisibility(hasChat) {
-        $('#createChatBtn').toggle(!hasChat);
-    }
+    let activeChatId = null;
 
-    // Получение списка чатов
-    function fetchChats() {
+    // Получение или создание чата
+    function fetchOrCreateChat() {
         $.ajax({
             url: '/chats',
             method: 'GET',
             dataType: 'json',
-            success: function (chats) {
-                $('#chatList').empty();
-
-                if (chats?.id) {
-                    $('#chatList').append(`
-                        <li class="chatItem selected" data-id="${chats.id}">
-                            ${chats.chatName}
-                        </li>
-                    `);
-
-                    loadChatMessages(chats.id);
-                    updateCreateButtonVisibility(true);
+            success: function (chat) {
+                if (chat?.id) {
+                    activeChatId = chat.id;
+                    loadChatMessages(chat.id);
                 } else {
-                    $('#chatList').append('<li>Нет доступных чатов</li>');
-                    updateCreateButtonVisibility(false);
+                    createNewChat();
                 }
             },
-            error: function (xhr) {
-                $('#chatList').html('<li>Ошибка загрузки</li>');
+            error: function () {
+                alert("Ошибка при загрузке чата");
             }
         });
     }
 
     // Создание нового чата
-    $('#createChatBtn').on('click', function () {
+    function createNewChat() {
         $.ajax({
             url: '/chats',
             method: 'POST',
             contentType: 'application/json',
             dataType: 'json',
             data: JSON.stringify({ chatName: "Новый чат" }),
-            success: function () {
-                fetchChats();
+            success: function (chat) {
+                activeChatId = chat.id;
+                loadChatMessages(chat.id);
             },
-            error: function (xhr) {
-                alert('Ошибка: ' + xhr.responseJSON?.error);
+            error: function () {
+                alert("Ошибка при создании чата");
             }
         });
-    });
+    }
 
-    // Очистка истории сообщений по новой кнопке
-    $('#clearChatBtn').on('click', function () {
-        const chatId = $('.chatItem.selected').data('id');
-        if (!chatId) {
-            alert('Сначала выберите чат');
-            return;
-        }
-
-        if (confirm("Очистить историю сообщений?")) {
-            $.ajax({
-                url: `/chats/${chatId}/messages`,
-                method: 'DELETE',
-                success: function () {
-                    $('#response').empty();
-                    alert('История сообщений очищена');
-                },
-                error: function (xhr) {
-                    alert('Ошибка: ' + xhr.responseJSON?.error);
-                }
-            });
-        }
-    });
-
-    // Переключение между чатами
-    $(document).on('click', '.chatItem', function () {
-        $('.chatItem').removeClass('selected');
-        $(this).addClass('selected');
-        const chatId = $(this).data('id');
-        loadChatMessages(chatId);
-    });
-
-    // Загрузка сообщений чата
+    // Загрузка сообщений
     function loadChatMessages(chatId) {
         $('#response').empty();
         $.ajax({
@@ -97,7 +55,6 @@ $(document).ready(function () {
                         </div>
                     `);
                 });
-                scrollToBottom();
             },
             error: function (xhr) {
                 handleChatError(xhr.status);
@@ -105,29 +62,16 @@ $(document).ready(function () {
         });
     }
 
-    // Обработка ошибок
-    function handleChatError(status) {
-        const errors = {
-            404: 'Чат не найден',
-            403: 'Доступ запрещен',
-            500: 'Ошибка сервера'
-        };
-        alert(errors[status] || 'Неизвестная ошибка');
-    }
-
     // Отправка сообщений
     $('#chatForm').on('submit', function (e) {
         e.preventDefault();
-        const chatId = $('.chatItem.selected').data('id');
         const message = $('#userInput').val().trim();
-
-        if (!chatId || !message) return;
-
-        sendMessageToAI(chatId, message);
+        if (!activeChatId || !message) return;
+        sendMessageToAI(activeChatId, message);
         $('#userInput').val('');
     });
 
-    // Отправка сообщения ИИ
+    // Отправка запроса ИИ
     function sendMessageToAI(chatId, message) {
         $('#response').append(`
             <div class="message user-message">
@@ -135,7 +79,6 @@ $(document).ready(function () {
             </div>
             <div class="message loading">ИИ печатает...</div>
         `);
-        scrollToBottom();
 
         fetch(`/ollama?chatId=${chatId}&input=${encodeURIComponent(message)}`, {
             method: 'POST'
@@ -154,36 +97,46 @@ $(document).ready(function () {
 
         $('#response .loading').remove();
         $('#response').append(aiMessageEl);
-        scrollToBottom();
 
         function read() {
             reader.read().then(({ done, value }) => {
                 if (done) return;
                 aiMessageEl.append(decoder.decode(value));
-                scrollToBottom();
                 read();
             });
         }
+
         read();
     }
 
-    // Прокрутка вниз
-    function scrollToBottom() {
-        const container = document.getElementById("response");
-        container.scrollTop = container.scrollHeight;
+    // Очистка истории
+    $('#clearChatBtn').on('click', function () {
+        if (!activeChatId) return;
+        if (confirm("Очистить историю сообщений?")) {
+            $.ajax({
+                url: `/chats/${activeChatId}/messages`,
+                method: 'DELETE',
+                success: function () {
+                    $('#response').empty();
+                    alert('История сообщений очищена');
+                },
+                error: function (xhr) {
+                    alert('Ошибка: ' + xhr.responseJSON?.error);
+                }
+            });
+        }
+    });
+
+    // Обработка ошибок
+    function handleChatError(status) {
+        const errors = {
+            404: 'Чат не найден',
+            403: 'Доступ запрещен',
+            500: 'Ошибка сервера'
+        };
+        alert(errors[status] || 'Неизвестная ошибка');
     }
 
-    // Обработка ошибок ИИ
-    function handleAIError(error) {
-        console.error(error);
-        $('#response .loading').replaceWith(`
-            <div class="message ai-message error">
-                <strong>Ошибка:</strong> ${error.message}
-            </div>
-        `);
-    }
-
-    // Инициализация
-    $('#sidePanelToggle').on('click', () => $('#sidePanel').toggleClass('open'));
-    fetchChats();
+    // Загрузка при старте
+    fetchOrCreateChat();
 });

@@ -7,9 +7,10 @@ html, body {
     background-color: #f4f4f9;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
-/* Обёртка */
+/* Основной контейнер */
 .chat-wrapper {
     flex: 1 1 auto;
     display: flex;
@@ -17,22 +18,25 @@ html, body {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px 0;
-    min-height: calc(100vh - 200px);
+    padding: 40px 20px 20px;
+    overflow-x: hidden;
 }
 
-/* Заголовок + кнопка */
+/* Заголовок и кнопка */
 .chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: nowrap;
+    gap: 20px;
 }
+
 .chat-header h1 {
-    text-align: center;
-    flex: 1;
     font-size: 2rem;
     margin: 0;
+    flex-grow: 1;
+    text-align: left;
 }
 
 /* Кнопка очистки */
@@ -49,16 +53,22 @@ html, body {
     background-color: #5e4ad8;
 }
 
-/* Чат */
+/* Блок чата */
 #chat {
     background: white;
-    padding: 1rem;
+    padding: 0;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border: 1px solid #ddd;
-    height: 80vh;               /* фиксированная высота */
-    overflow-y: auto;
     margin-bottom: 10px;
+    overflow-x: hidden;
+}
+
+/* Область сообщений */
+#response {
+    height: 700px;
+    overflow-y: auto;
+    padding: 1rem;
 }
 
 /* Сообщения */
@@ -71,20 +81,19 @@ html, body {
 .ai-message {
     color: #333;
 }
+.ai-message.error {
+    color: red;
+}
 .loading {
     color: #888;
     font-style: italic;
-}
-.ai-message.error {
-    color: red;
 }
 
 /* Форма ввода */
 #chatForm {
     display: flex;
     gap: 10px;
-    margin-bottom: 0;
-    padding-bottom: 0.25rem;
+    flex-wrap: nowrap;
 }
 #chatForm input {
     flex: 1;
@@ -119,13 +128,22 @@ footer.footer {
         width: 100%;
         padding: 20px 10px;
     }
+
     .chat-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
         gap: 10px;
     }
+
     .chat-header h1 {
         font-size: 1.5rem;
         text-align: left;
+        flex-grow: 1;
+        margin: 0;
+    }
+
+    #clearChatBtn {
+        margin-left: auto;
     }
 }

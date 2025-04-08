@@ -37,24 +37,17 @@
 </nav>
 
 <main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Персональный помощник</h1>
-        <button id="clearChatBtn" class="btn btn-outline-danger">Очистить историю</button>
+    <div class="chat-header">
+        <h1 class="text-center w-100">Персональный помощник</h1>
+        <button id="clearChatBtn">Очистить историю</button>
     </div>
 
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <button id="createChatBtn" class="btn btn-primary w-100 mb-3">Создать чат</button>
-            <ul id="chatList" class="list-group"></ul>
-        </div>
-        <div class="col-md-8">
-            <div id="response" class="chat-window border rounded p-3 mb-3" style="height: 400px; overflow-y: auto;"></div>
-            <form id="chatForm" class="d-flex">
-                <input id="userInput" type="text" class="form-control me-2" placeholder="Введите сообщение..." required>
-                <button type="submit" class="btn btn-primary">Отправить</button>
-            </form>
-        </div>
-    </div>
+    <div class="chat-window border rounded p-3 mb-3" id="response"></div>
+
+    <form id="chatForm" class="d-flex">
+        <input id="userInput" type="text" class="form-control me-2" placeholder="Введите сообщение..." required>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+    </form>
 </main>
 
 <footer class="footer mt-auto">

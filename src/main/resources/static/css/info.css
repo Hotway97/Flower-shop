@@ -1,0 +1,117 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.about-section {
+  padding: 3rem 1rem;
+  background: linear-gradient(to bottom, #ff35c2, #7b63f4);
+  color: white;
+  text-align: center;
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.about-text {
+  max-width: 800px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease;
+  box-shadow: none; /* без тени по умолчанию */
+}
+
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* мягкая тень при наведении */
+}
+
+.card-img-top {
+  height: 300px;
+  object-fit: cover;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.card-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+}
+
+.card-body p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.btn-purple {
+  background-color: #7b63f4;
+  border: none;
+  color: #fff !important; /* белый текст всегда */
+  padding: 10px;
+  font-weight: 500;
+  transition: 0.3s;
+  width: 100%;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.btn-purple:hover {
+  background-color: #6a52e3;
+  color: #fff !important;
+}
+
+footer.footer {
+  margin-top: auto;
+  text-align: center;
+  color: white;
+}
+
+/* Убираем точки у футера */
+footer.footer ul.social-icon {
+  list-style: none;
+}
+
+
+
+@media (max-width: 768px) {
+  .about-title {
+    font-size: 1.8rem;
+  }
+
+  .about-text {
+    font-size: 1rem;
+  }
+
+  .card-body {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 1440px) {
+  .about-title {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1920px) {
+  .card-body {
+    font-size: 1.05rem;
+  }
+}

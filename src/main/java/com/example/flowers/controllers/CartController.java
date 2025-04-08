@@ -40,10 +40,12 @@ public class CartController {
     @PostMapping("/add/{id}")
     public String addToCart(@AuthenticationPrincipal User user,
                             @PathVariable Long id,
+                            @RequestParam(value = "redirectUrl", required = false) String redirectUrl,
                             Model model) {
         if (user == null) {
             return "redirect:/login";
         }
+
         try {
             Product product = productService.getProduct(id);
             Cart cart = user.getCart();
@@ -54,12 +56,16 @@ public class CartController {
                 userService.update(user);
             }
             cartService.addProductToCart(cart, product);
+            if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                return "redirect:" + redirectUrl;
+            }
             return "redirect:/";
         } catch (IllegalArgumentException e) {
             model.addAttribute("message", "Ошибка добавления товара в корзину");
             return "main";
         }
     }
+
 
     @PostMapping("/item/increase/{cartItemId}")
     public String increaseCartItem(@AuthenticationPrincipal User user,

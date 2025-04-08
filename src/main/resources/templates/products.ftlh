@@ -88,7 +88,7 @@
                                 <p class="card-text">${product.description}</p>
                                 <form action="/cart/add/${product.id}" method="post">
                                     <input type="hidden" name="_csrf" value="${_csrf.token!}"/>
-                                    <button type="submit" class="btn btn-light" style="background-color: #7b63f4; color: white">
+                                    <button type="submit" class="btn btn-purple">
                                         Добавить в корзину
                                     </button>
                                 </form>

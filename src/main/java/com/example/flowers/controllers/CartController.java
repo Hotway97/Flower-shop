@@ -47,7 +47,7 @@ public class CartController {
         }
 
         try {
-            Product product = productService.getProduct(id);
+            Product product = productService.getProductById(id);
             Cart cart = user.getCart();
             if (cart == null) {
                 cart = new Cart();

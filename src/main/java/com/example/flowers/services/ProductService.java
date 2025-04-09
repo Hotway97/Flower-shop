@@ -13,8 +13,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -25,9 +27,49 @@ public class ProductService {
     @Autowired
     private final UserRepository userRepository;
 
-    public List<Product> listProducts(String title) {
-        if (title != null) return productRepository.findByTitle(title);
-        return productRepository.findAll();
+    public List<Product> listProducts(String title, String sortBy, Integer minPrice, Integer maxPrice) {
+        // Установка дефолтных значений для цены
+        int effectiveMinPrice = minPrice != null ? minPrice : 0;
+        int effectiveMaxPrice = maxPrice != null ? maxPrice : Integer.MAX_VALUE;
+
+        if (effectiveMinPrice > effectiveMaxPrice) {
+            return Collections.emptyList();
+        }
+
+        List<Product> products;
+
+        if (title != null && !title.isEmpty()) {
+            // Передаем оригинальный title без преобразований - ILIKE сам обработает регистр
+            products = productRepository.findByTitleContainingAndPriceBetween(title,
+                    effectiveMinPrice, effectiveMaxPrice);
+        } else {
+            products = productRepository.findByPriceBetween(effectiveMinPrice, effectiveMaxPrice);
+        }
+
+        // Остальная логика сортировки остается без изменений
+        if (sortBy != null && !sortBy.isEmpty()) {
+            switch (sortBy) {
+                case "title_asc":
+                    return products.stream()
+                            .sorted(Product.TitleAscComparator)
+                            .collect(Collectors.toList());
+                case "title_desc":
+                    return products.stream()
+                            .sorted(Product.TitleDescComparator)
+                            .collect(Collectors.toList());
+                case "price_asc":
+                    return products.stream()
+                            .sorted(Product.PriceAscComparator)
+                            .collect(Collectors.toList());
+                case "price_desc":
+                    return products.stream()
+                            .sorted(Product.PriceDescComparator)
+                            .collect(Collectors.toList());
+                default:
+                    return products;
+            }
+        }
+        return products;
     }
 
     public void saveProduct(Principal principal, Product product, MultipartFile file1, MultipartFile file2, MultipartFile file3) throws IOException {
@@ -81,33 +123,9 @@ public class ProductService {
             }
         } else {
             log.error("Product with id = {} is not found", id);
-        }    }
-
-    public void add(Product product) {
-        productRepository.save(product);
-    }
-
-
-    public void remove(Long id) {
-        if (productRepository.findById(id).isPresent()) {
-            productRepository.deleteById(id);
-        } else {
-            throw new IllegalArgumentException("Product (" + id + ") not found!");
         }
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
-    }
-
-    public Product getProduct(Long id) throws IllegalArgumentException {
-        Optional<Product> optProduct = productRepository.findById(id);
-        if (optProduct.isPresent()) {
-            return optProduct.get();
-        } else {
-            throw new IllegalArgumentException("Product (id = " + id + ") does not exist!");
-        }
-    }
     public Product getProductById(Long id) {
         return productRepository.findById(id).orElse(null);
     }

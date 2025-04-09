@@ -1,42 +1,55 @@
 package com.example.flowers.controllers;
 
-import com.example.flowers.models.Product;
 import com.example.flowers.models.User;
 import com.example.flowers.services.ProductService;
+import com.example.flowers.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
-    @Autowired
     private final ProductService productService;
+    private final UserService userService;
 
     @GetMapping("/")
-    public String products(@RequestParam(value = "searchWord", required = false) String title, Principal principal, Model model) {
-        model.addAttribute("products", productService.listProducts(title));
-        model.addAttribute("user", productService.getUserByPrincipal(principal));
-        model.addAttribute("searchWord", title);
+    public String products(
+            @RequestParam(name = "searchWord", required = false) String searchWord,
+            @RequestParam(name = "sortBy", required = false) String sortBy,
+            @RequestParam(name = "minPrice", required = false) String minPriceStr,
+            @RequestParam(name = "maxPrice", required = false) String maxPriceStr,
+            Principal principal,
+            Model model) {
+
+        // Парсим цены (обработка формата с пробелами)
+        Integer minPrice = parsePrice(minPriceStr);
+        Integer maxPrice = parsePrice(maxPriceStr);
+
+        model.addAttribute("products", productService.listProducts(searchWord, sortBy, minPrice, maxPrice));
+        model.addAttribute("user", userService.getUserByPrincipal(principal));
+        model.addAttribute("searchWord", searchWord);
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("minPrice", minPriceStr); // Сохраняем оригинальную строку
+        model.addAttribute("maxPrice", maxPriceStr); // Сохраняем оригинальную строку
+
         return "products";
     }
 
-    @GetMapping("/product/{id}")
-    public String productInfo(@PathVariable Long id, Model model, Principal principal) {
-        Product product = productService.getProductById(id);
-        model.addAttribute("user", productService.getUserByPrincipal(principal));
-        model.addAttribute("product", product);
-        model.addAttribute("images", product.getImages());
-        model.addAttribute("authorProduct", product.getUser());
-        return "product-info";
+    private Integer parsePrice(String priceStr) {
+        if (priceStr == null || priceStr.trim().isEmpty()) {
+            return null;
+        }
+        try {
+            // Удаляем все нецифровые символы, кроме минуса
+            String normalized = priceStr.replaceAll("[^\\d-]", "");
+            return Integer.parseInt(normalized);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

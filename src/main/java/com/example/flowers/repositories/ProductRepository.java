@@ -4,15 +4,30 @@ import com.example.flowers.models.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    List<Product> findByTitle(String title);
-    @Query("SELECT c.price FROM Product c WHERE c.id = :productId")
+
+    @Query("SELECT p FROM Product p WHERE p.title ILIKE %:title%")
+    List<Product> findByTitleContaining(@Param("title") String title);
+
+
+    @Query("SELECT p FROM Product p WHERE p.price BETWEEN :minPrice AND :maxPrice")
+    List<Product> findByPriceBetween(@Param("minPrice") Integer minPrice,
+                                     @Param("maxPrice") Integer maxPrice);
+
+    @Query("SELECT p FROM Product p WHERE p.title ILIKE %:title% AND p.price BETWEEN :minPrice AND :maxPrice")
+    List<Product> findByTitleContainingAndPriceBetween(
+            @Param("title") String title,
+            @Param("minPrice") Integer minPrice,
+            @Param("maxPrice") Integer maxPrice);
+
+    @Query("SELECT p.price FROM Product p WHERE p.id = :productId")
     Long findPriceById(@Param("productId") Long productId);
 
-    // Получаем только название курса по ID
-    @Query("SELECT c.title FROM Product c WHERE c.id = :productId")
+    @Query("SELECT p.title FROM Product p WHERE p.id = :productId")
     String findProductTitleById(@Param("productId") Long productId);
 }

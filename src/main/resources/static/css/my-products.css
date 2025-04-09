@@ -183,6 +183,7 @@ main {
     color: #fff !important;
 }
 
+
 .product-link:hover .card-title,
 .product-link:hover .card-price,
 .product-link:hover .card-text {
@@ -202,6 +203,13 @@ main {
 .product-link * {
     text-decoration: none !important;
     color: inherit !important;
+}
+
+.btn-danger {
+    color: #fff !important;
+}
+.card .btn-danger {
+    color: #fff !important;
 }
 
 /* ===== Футер ===== */

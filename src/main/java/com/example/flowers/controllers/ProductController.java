@@ -1,5 +1,6 @@
 package com.example.flowers.controllers;
 
+import com.example.flowers.models.Product;
 import com.example.flowers.models.User;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
@@ -51,5 +53,15 @@ public class ProductController {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    @GetMapping("/product/{id}")
+    public String productInfo(@PathVariable Long id, Model model, Principal principal) {
+        Product product = productService.getProductById(id);
+        model.addAttribute("user", productService.getUserByPrincipal(principal));
+        model.addAttribute("product", product);
+        model.addAttribute("images", product.getImages());
+        model.addAttribute("authorProduct", product.getUser());
+        return "product-info";
     }
 }

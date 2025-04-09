@@ -126,6 +126,7 @@
 
 .btn-purple:hover {
     background-color: #5e4ad8;
+    color: white;
 }
 
 .order-number {

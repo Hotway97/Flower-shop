@@ -1,0 +1,148 @@
+/* ===== Базовые стили ===== */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+}
+
+/* ===== Карусель ===== */
+.product-carousel {
+    width: 100%;
+    background-color: #ffffff;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel-inner {
+    border-radius: 0;
+    margin-top:2%;
+}
+
+.carousel-item {
+    transition: transform 0.6s ease;
+}
+
+.product-img {
+    width: 100%;
+    max-height: 600px;
+    object-fit: contain;
+    border-radius: 10px 10px 10px 10px;
+}
+
+/* ===== Индикаторы ===== */
+.carousel-indicators {
+    bottom: 10px;
+}
+
+.carousel-indicators li {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.carousel-indicators .active {
+    background-color: #7b63f4;
+}
+
+/* ===== Стрелки ===== */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 8%;
+    opacity: 1;
+    z-index: 10;
+}
+
+.carousel-control-prev {
+    left: 3%;
+    justify-content: flex-start;
+}
+
+.carousel-control-next {
+    right: 3%;
+    justify-content: flex-end;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: white;
+    background-size: 50% 50%;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml,%3Csvg fill='%237b63f4' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M5.5 0L4.09 1.41 6.67 4 4.09 6.59 5.5 8l4-4z' transform='rotate(180 5 4)'/%3E%3C/svg%3E");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml,%3Csvg fill='%237b63f4' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3E%3Cpath d='M2.5 0L1.09 1.41 3.67 4 1.09 6.59 2.5 8l4-4z'/%3E%3C/svg%3E");
+}
+
+/* ===== Контент ===== */
+.container.text-center {
+    padding: 0 15px;
+}
+
+.container h1 {
+    font-size: 2rem;
+    margin-top: 2rem;
+    color: #333;
+}
+
+.container p {
+    margin: 0.5rem 0;
+    color: black;
+}
+
+footer.footer ul.social-icon {
+    list-style: none;
+}
+
+
+/* ===== Адаптивность ===== */
+@media (max-width: 768px) {
+    .product-img {
+        max-height: 260px;
+    }
+
+    .container h1 {
+        font-size: 1.5rem;
+    }
+
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+        width: 32px;
+        height: 32px;
+    }
+
+    .carousel-control-prev {
+        left: 2px;
+    }
+
+    .carousel-control-next {
+        right: 2px;
+    }
+}
+
+@media (min-width: 1920px) {
+    .product-img {
+        max-height: 600px;
+    }
+}

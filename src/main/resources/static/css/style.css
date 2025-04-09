@@ -4,18 +4,6 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.carousel-caption {
-    height: 380px;
-    bottom: 0 !important;
-}
-
-.carousel,
-.carousel-inner,
-.carousel-item-next,
-.carousel-item-prev,
-.carousel-item.active {
-    height: 380px;
-}
 
 .product {
     height: 300px;

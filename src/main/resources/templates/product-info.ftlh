@@ -25,7 +25,17 @@
         <label class="menu-button-container" for="menu-toggle"><div class="menu-button"></div></label>
         <ul class="menu">
             <li><a class="nav-link mx-2" href="/">Каталог</a></li>
-            <li><a class="nav-link mx-2" href="/cart">Корзина</a></li>
+            <li>
+                <a class="nav-link mx-2" href="/cart">Корзина
+                    <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
+                        <#assign totalQuantity = 0>
+                        <#list user.cart.cartItems as item>
+                            <#assign totalQuantity += item.quantity>
+                        </#list>
+                        <span class="badge badge-light ml-1">${totalQuantity}</span>
+                    </#if>
+                </a>
+            </li>
             <li><a class="nav-link mx-2" href="/info">О нас</a></li>
             <li><a class="nav-link mx-2" href="/chat">Ассистент</a></li>
             <li><a class="nav-link mx-2" href="/profile">Профиль</a></li>
@@ -63,6 +73,13 @@
     <div class="container text-center mt-4">
         <h1>${product.title} | ${product.price} ₽</h1>
         <h5>${product.description}</h5>
+        <form action="/cart/add/${product.id}" method="post">
+            <input type="hidden" name="_csrf" value="${_csrf.token!}"/>
+            <input type="hidden" name="redirectUrl" value="/product/${product.id}">
+            <button type="submit" class="btn btn-purple">
+                Добавить в корзину
+            </button>
+        </form>
         <p style="margin-top: 5%">Имя продавца: <b>${authorProduct.name}</b></p>
         <p>Номер телефона продавца: <b>${authorProduct.phoneNumber}</b></p>
         <p> Профиль продавца:

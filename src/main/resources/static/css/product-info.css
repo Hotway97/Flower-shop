@@ -115,6 +115,21 @@ footer.footer ul.social-icon {
     list-style: none;
 }
 
+.btn-purple {
+    background-color: #7b63f4;
+    border-color: #7b63f4;
+    color: white;
+    padding: 10px 25px;
+    font-size: 1rem;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+.btn-purple:hover {
+    background-color: #6a52e3;
+    border-color: #6a52e3;
+    box-shadow: 0 4px 8px rgba(123, 99, 244, 0.3);
+}
+
 
 /* ===== Адаптивность ===== */
 @media (max-width: 768px) {
@@ -144,5 +159,48 @@ footer.footer ul.social-icon {
 @media (min-width: 1920px) {
     .product-img {
         max-height: 600px;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-purple {
+        width: 80%;
+        font-size: 14px;
+    }
+}
+
+/* Планшеты (577px - 768px) */
+@media (min-width: 577px) and (max-width: 768px) {
+    .btn-purple {
+        width: 80%;
+        max-width: 350px;
+        font-size: 15px;
+    }
+}
+
+/* Ноутбуки (769px - 1200px) */
+@media (min-width: 769px) and (max-width: 1200px) {
+    .btn-purple {
+        width: 80%;
+        max-width: 400px;
+        font-size: 16px;
+    }
+}
+
+/* Десктопы (1201px - 1920px) */
+@media (min-width: 1201px) and (max-width: 1920px) {
+    .btn-purple {
+        width: 100%;
+        max-width: 450px;
+        font-size: 17px;
+    }
+}
+
+/* 2K+ экраны (от 1921px) */
+@media (min-width: 1921px) {
+    .btn-purple {
+        width: 100%;
+        max-width: 600px;
+        font-size: 18px;
     }
 }

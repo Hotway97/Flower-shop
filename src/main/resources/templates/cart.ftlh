@@ -93,7 +93,7 @@
                 </div>
                 <h3 class="mb-3">Ваша корзина пуста</h3>
                 <p class="text-muted mb-4">Добавьте товары, чтобы продолжить покупки</p>
-                <a href="/" class="btn btn-primary px-4 py-2">
+                <a href="/" class="btn btn-purple px-4 py-2">
                     <ion-icon name="arrow-back-outline" class="mr-2"></ion-icon>Вернуться к покупкам
                 </a>
             </div>

@@ -47,12 +47,11 @@ footer.footer {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 0.5rem;
 }
 
 .cart-item-quantity button {
-    width: 35px;
-    height: 35px;
+    width: 42px;
+    height: 38px;
 }
 
 .cart-item-quantity span {
@@ -80,8 +79,50 @@ footer.footer {
     margin-bottom: 1rem;
 }
 
+.btn-purple {
+    background-color: #7b63f4;
+    border-color: #7b63f4;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn-purple:hover {
+    background-color: #6a52e3;
+    border-color: #6a52e3;
+    color: white;
+}
+
+.btn-purple ion-icon {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+/* Уточненные стили для кнопки "Вернуться к покупкам" */
+.btn-back-to-shopping {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0.5rem 1.5rem;
+}
+
+.btn-back-to-shopping ion-icon {
+    margin: 0;
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+
 .remove-all-btn {
     margin-left: 1rem;
+    width: 40px;
+    height: 40px;
 }
 
 .modal-close-btn {

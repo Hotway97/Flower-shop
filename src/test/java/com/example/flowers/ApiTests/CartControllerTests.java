@@ -9,7 +9,10 @@ import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
@@ -18,14 +21,23 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CartControllerTests {
 
-    @Mock private ProductService productService;
-    @Mock private CartService cartService;
-    @Mock private UserService userService;
-    @Mock private Model model;
+    @Mock
+    private ProductService productService;
 
-    @InjectMocks private CartController cartController;
+    @Mock
+    private CartService cartService;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private Model model;
+
+    @InjectMocks
+    private CartController cartController;
 
     private User user;
     private Cart cart;
@@ -33,109 +45,144 @@ class CartControllerTests {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         user = new User();
         user.setId(1L);
+
         cart = new Cart();
         cart.setId(10L);
         user.setCart(cart);
+
         product = new Product();
         product.setId(5L);
     }
 
-    // --- showCart ---
+    // ========== showCart Tests ==========
     @Test
-    void showCart_authenticatedUser_returnsCartView() {
-        when(userService.findById(1L)).thenReturn(Optional.of(user));
-        String view = cartController.showCart(user, model);
-        assertEquals("cart", view);
+    void showCart_WhenUserAuthenticated_ReturnsCartViewWithUserAndCart() {
+        when(userService.findById(user.getId())).thenReturn(Optional.of(user));
+
+        String viewName = cartController.showCart(user, model);
+
+        assertEquals("cart", viewName);
         verify(model).addAttribute("user", user);
         verify(model).addAttribute("cart", cart);
+        verify(userService).findById(user.getId());
     }
 
     @Test
-    void showCart_nullUser_redirectsToLogin() {
-        String view = cartController.showCart(null, model);
-        assertEquals("redirect:/login", view);
+    void showCart_WhenUserNotAuthenticated_RedirectsToLogin() {
+        String viewName = cartController.showCart(null, model);
+
+        assertEquals("redirect:/login", viewName);
+        verifyNoInteractions(userService);
+        verifyNoInteractions(model);
+    }
+
+    // ========== addToCart Tests ==========
+    @Test
+    void addToCart_WhenProductExists_AddsToCart() {
+        when(productService.getProductById(product.getId())).thenReturn(product);
+
+        String viewName = cartController.addToCart(user, product.getId(), null, model);
+
+        assertEquals("redirect:/", viewName);
+        verify(cartService).addProductToCart(cart, product);
     }
 
     @Test
-    void addToCart_invalidProduct_showsError() {
-        when(productService.getProductById(5L)).thenThrow(new IllegalArgumentException());
-        String view = cartController.addToCart(user, 5L, null, model);
-        assertEquals("main", view);
-        verify(model).addAttribute(eq("message"), any());
+    void addToCart_WhenProductInvalid_ReturnsMainWithErrorMessage() {
+        when(productService.getProductById(product.getId())).thenThrow(new IllegalArgumentException());
+
+        String viewName = cartController.addToCart(user, product.getId(), null, model);
+
+        assertEquals("main", viewName);
+        verify(model).addAttribute(eq("message"), anyString());
     }
 
     @Test
-    void addToCart_nullUser_redirectsLogin() {
-        String view = cartController.addToCart(null, 5L, null, model);
-        assertEquals("redirect:/login", view);
+    void addToCart_WhenUserNotAuthenticated_RedirectsToLogin() {
+        String viewName = cartController.addToCart(null, product.getId(), null, model);
+
+        assertEquals("redirect:/login", viewName);
+        verifyNoInteractions(productService);
+        verifyNoInteractions(cartService);
     }
 
-    // --- increaseCartItem ---
+    // ========== increaseCartItem Tests ==========
     @Test
-    void increaseCartItem_success() {
-        String view = cartController.increaseCartItem(user, 1L);
-        assertEquals("redirect:/cart", view);
-        verify(cartService).increaseCartItem(cart, 1L);
-    }
+    void increaseCartItem_WhenUserAuthenticated_IncreasesItemQuantity() {
+        String viewName = cartController.increaseCartItem(user, product.getId());
 
-    @Test
-    void increaseCartItem_nullUser_redirectsLogin() {
-        String view = cartController.increaseCartItem(null, 1L);
-        assertEquals("redirect:/login", view);
-    }
-
-    // --- decreaseCartItem ---
-    @Test
-    void decreaseCartItem_success() {
-        String view = cartController.decreaseCartItem(user, 2L);
-        assertEquals("redirect:/cart", view);
-        verify(cartService).decreaseCartItem(cart, 2L);
+        assertEquals("redirect:/cart", viewName);
+        verify(cartService).increaseCartItem(cart, product.getId());
     }
 
     @Test
-    void decreaseCartItem_nullUser_redirectsLogin() {
-        String view = cartController.decreaseCartItem(null, 2L);
-        assertEquals("redirect:/login", view);
+    void increaseCartItem_WhenUserNotAuthenticated_RedirectsToLogin() {
+        String viewName = cartController.increaseCartItem(null, product.getId());
+
+        assertEquals("redirect:/login", viewName);
+        verifyNoInteractions(cartService);
     }
 
-    // --- removeAllCartItem ---
+    // ========== decreaseCartItem Tests ==========
     @Test
-    void removeAllCartItem_success() {
-        when(userService.findById(1L)).thenReturn(Optional.of(user));
-        String view = cartController.removeAllCartItem(user, 3L);
-        assertEquals("redirect:/cart", view);
-        verify(cartService).removeAllCartItem(cart, 3L);
+    void decreaseCartItem_WhenUserAuthenticated_DecreasesItemQuantity() {
+        String viewName = cartController.decreaseCartItem(user, product.getId());
+
+        assertEquals("redirect:/cart", viewName);
+        verify(cartService).decreaseCartItem(cart, product.getId());
     }
 
     @Test
-    void removeAllCartItem_userNotFound_throws() {
-        when(userService.findById(1L)).thenReturn(Optional.empty());
+    void decreaseCartItem_WhenUserNotAuthenticated_RedirectsToLogin() {
+        String viewName = cartController.decreaseCartItem(null, product.getId());
+
+        assertEquals("redirect:/login", viewName);
+        verifyNoInteractions(cartService);
+    }
+
+    // ========== removeAllCartItem Tests ==========
+    @Test
+    void removeAllCartItem_WhenUserAndItemExist_RemovesItem() {
+        when(userService.findById(user.getId())).thenReturn(Optional.of(user));
+
+        String viewName = cartController.removeAllCartItem(user, product.getId());
+
+        assertEquals("redirect:/cart", viewName);
+        verify(cartService).removeAllCartItem(cart, product.getId());
+    }
+
+    @Test
+    void removeAllCartItem_WhenUserNotFound_ThrowsException() {
+        when(userService.findById(user.getId())).thenReturn(Optional.empty());
+
         assertThrows(IllegalArgumentException.class, () ->
-                cartController.removeAllCartItem(user, 3L)
+                cartController.removeAllCartItem(user, product.getId())
         );
     }
 
-    // --- clearCart ---
+    // ========== clearCart Tests ==========
     @Test
-    void clearCart_success() {
-        ResponseEntity<Void> response = cartController.clearCart(1L);
+    void clearCart_WhenCalled_ClearsCartAndReturnsOk() {
+        ResponseEntity<Void> response = cartController.clearCart(user.getId());
+
         assertEquals(200, response.getStatusCodeValue());
-        verify(cartService).clearCartByUserId(1L);
+        verify(cartService).clearCartByUserId(user.getId());
     }
 
-    // --- checkout ---
+    // ========== checkout Tests ==========
     @Test
-    void checkout_authenticated_redirectsCart() {
-        String view = cartController.checkout(user);
-        assertEquals("redirect:/cart", view);
+    void checkout_WhenUserAuthenticated_RedirectsToCart() {
+        String viewName = cartController.checkout(user);
+
+        assertEquals("redirect:/cart", viewName);
     }
 
     @Test
-    void checkout_nullUser_redirectsLogin() {
-        String view = cartController.checkout(null);
-        assertEquals("redirect:/login", view);
+    void checkout_WhenUserNotAuthenticated_RedirectsToLogin() {
+        String viewName = cartController.checkout(null);
+
+        assertEquals("redirect:/login", viewName);
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 @RestController
-class OllamaApiController {
+public class OllamaApiController {
 
     private final ChatClient chatClient;
     private final MessageService messageService;

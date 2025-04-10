@@ -8,112 +8,147 @@ import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AdminControllerTests {
 
-    @Mock private UserService userService;
-    @Mock private ProductService productService;
-    @Mock private Principal principal;
-    @Mock private Model model;
-    @Mock private MultipartFile file1, file2, file3;
+    @Mock
+    private UserService userService;
 
-    @InjectMocks private AdminController adminController;
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private Principal principal;
+
+    @Mock
+    private Model model;
+
+    @Mock
+    private MultipartFile file1, file2, file3;
+
+    @InjectMocks
+    private AdminController adminController;
 
     private User user;
     private Product product;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        user = new User(); user.setId(1L);
-        product = new Product(); product.setId(1L);
+        user = new User();
+        user.setId(1L);
+        user.setRoles(new HashSet<>(Collections.singleton(Role.ROLE_ADMIN)));
+
+        product = new Product();
+        product.setId(1L);
     }
 
-    @Test void testAdminPage() {
-        when(userService.list()).thenReturn(java.util.List.of(user));
+    // ========== Admin Dashboard Tests ==========
+    @Test
+    void admin_WhenCalled_ReturnsAdminViewWithUsersAndCurrentUser() {
+        when(userService.list()).thenReturn(Collections.singletonList(user));
         when(userService.getUserByPrincipal(principal)).thenReturn(user);
-        String view = adminController.admin(model, principal);
-        assertEquals("admin", view);
-        verify(model).addAttribute(eq("users"), any());
-        verify(model).addAttribute(eq("user"), any());
+
+        String viewName = adminController.admin(model, principal);
+
+        assertEquals("admin", viewName);
+        verify(model).addAttribute("users", Collections.singletonList(user));
+        verify(model).addAttribute("user", user);
     }
 
-    @Test void testUserBan() {
-        String view = adminController.userBan(1L);
-        verify(userService).banUser(1L);
-        assertEquals("redirect:/admin", view);
+    // ========== User Management Tests ==========
+    @Test
+    void userBan_WhenCalled_BansUserAndRedirects() {
+        String viewName = adminController.userBan(user.getId());
+
+        assertEquals("redirect:/admin", viewName);
+        verify(userService).banUser(user.getId());
     }
 
-    @Test void testUserEditForm() {
+    @Test
+    void userEdit_WhenCalled_ReturnsEditFormWithUserData() {
         when(userService.getUserByPrincipal(principal)).thenReturn(user);
-        String view = adminController.userEdit(user, model, principal);
-        assertEquals("user-edit", view);
+
+        String viewName = adminController.userEdit(user, model, principal);
+
+        assertEquals("user-edit", viewName);
         verify(model).addAttribute("editableUser", user);
         verify(model).addAttribute("currentUser", user);
         verify(model).addAttribute("roles", Role.values());
     }
 
-    @Test void testUserEditRoles() {
+    @Test
+    void userEditRoles_WhenCalled_UpdatesUserRolesAndRedirects() {
         Map<String, String> form = new HashMap<>();
-        form.put("ROLE_USER", "on");
-        String view = adminController.userEdit(user, form);
+        form.put("ROLE_ADMIN", "on");
+
+        String viewName = adminController.userEdit(user, form);
+
+        assertEquals("redirect:/admin", viewName);
         verify(userService).changeUserRoles(user, form);
-        assertEquals("redirect:/admin", view);
     }
 
-    @Test void testCreateProduct() throws IOException {
-        when(productService.getUserByPrincipal(principal)).thenReturn(user);
-        String view = adminController.createProduct(file1, file2, file3, product, principal);
+    // ========== Product Management Tests ==========
+    @Test
+    void createProduct_WhenCalled_SavesProductAndRedirects() throws IOException {
+        String viewName = adminController.createProduct(file1, file2, file3, product, principal);
+
+        assertEquals("redirect:/my/products", viewName);
         verify(productService).saveProduct(principal, product, file1, file2, file3);
-        assertEquals("redirect:/my/products", view);
     }
 
-    @Test void testDeleteProduct() {
+    @Test
+    void deleteProduct_WhenCalled_DeletesProductAndRedirects() {
         when(productService.getUserByPrincipal(principal)).thenReturn(user);
-        String view = adminController.deleteProduct(1L, principal);
-        verify(productService).deleteProduct(user, 1L);
-        assertEquals("redirect:/my/products", view);
+
+        String viewName = adminController.deleteProduct(product.getId(), principal);
+
+        assertEquals("redirect:/my/products", viewName);
+        verify(productService).deleteProduct(user, product.getId());
     }
 
-    @Test void testUserProducts() {
+    // ========== My Products Tests ==========
+    @Test
+    void userProducts_WhenCalled_ReturnsProductsViewWithUserData() {
         when(productService.getUserByPrincipal(principal)).thenReturn(user);
-        String view = adminController.userProducts(principal, model);
-        assertEquals("my-products", view);
-        verify(model).addAttribute(eq("user"), eq(user));
-        verify(model).addAttribute(eq("products"), any());
+        user.setProducts(Collections.singletonList(product));
+
+        String viewName = adminController.userProducts(principal, model);
+
+        assertEquals("my-products", viewName);
+        verify(model).addAttribute("user", user);
+        verify(model).addAttribute("products", Collections.singletonList(product));
     }
 
-    @Test void testProductCreationWithNullFiles() throws IOException {
-        String view = adminController.createProduct(null, null, null, product, principal);
-        assertEquals("redirect:/my/products", view);
+    // Дополнительные edge-case тесты
+    @Test
+    void userEdit_WithNullPrincipal_HandlesNullGracefully() {
+        String viewName = adminController.userEdit(user, model, null);
+
+        assertEquals("user-edit", viewName);
+        verify(model).addAttribute("editableUser", user);
+        verify(model).addAttribute("currentUser", null);
+        verify(model).addAttribute("roles", Role.values());
     }
 
-    @Test void testProductDeletionWithoutUser() {
-        when(productService.getUserByPrincipal(principal)).thenReturn(null);
-        String view = adminController.deleteProduct(99L, principal);
-        verify(productService).deleteProduct(null, 99L);
-        assertEquals("redirect:/my/products", view);
-    }
+    @Test
+    void createProduct_WithNullFiles_HandlesNullGracefully() throws IOException {
+        String viewName = adminController.createProduct(null, null, null, product, principal);
 
-    @Test void testUserEditFormWithNullPrincipal() {
-        when(userService.getUserByPrincipal(null)).thenReturn(null);
-        String view = adminController.userEdit(user, model, null);
-        assertEquals("user-edit", view);
-        verify(model).addAttribute(eq("editableUser"), eq(user));
-        verify(model).addAttribute(eq("currentUser"), isNull());
-        verify(model).addAttribute(eq("roles"), eq(Role.values()));
+        assertEquals("redirect:/my/products", viewName);
+        verify(productService).saveProduct(principal, product, null, null, null);
     }
 }

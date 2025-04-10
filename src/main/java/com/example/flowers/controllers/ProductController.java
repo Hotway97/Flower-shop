@@ -59,6 +59,10 @@ public class ProductController {
     public String productInfo(@PathVariable Long id, Model model, Principal principal) {
         Product product = productService.getProductById(id);
         model.addAttribute("user", productService.getUserByPrincipal(principal));
+        if (product == null) {
+            model.addAttribute("product", null);
+            return "product-info";
+        }
         model.addAttribute("product", product);
         model.addAttribute("images", product.getImages());
         model.addAttribute("authorProduct", product.getUser());

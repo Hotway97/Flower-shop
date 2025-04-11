@@ -30,13 +30,15 @@
             <li class="nav-item">
                 <a class="nav-link mx-2" style="color:white" href="/cart">
                     Корзина
-                    <#if user?? && user.cart?? && user.cart.cartItems?size gt 0>
-                        <#assign totalQuantity = 0>
+                    <#assign totalQuantity = 0>
+                    <#if user?? && user.cart??>
                         <#list user.cart.cartItems as item>
                             <#assign totalQuantity += item.quantity>
                         </#list>
-                        <span class="badge badge-light ml-1">${totalQuantity}</span>
                     </#if>
+                    <span class="badge badge-light ml-1" style="${(totalQuantity == 0)?string('display:none;', '')}">
+    ${totalQuantity}
+</span>
                 </a>
             </li>
             <li class="nav-item"><a class="nav-link mx-2 active" style="color:white" href="/info">О нас</a></li>
@@ -114,6 +116,8 @@
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <script>
     var currentUserId = "${user.id}";
+    var csrfHeader = "${_csrf.headerName}";
+    var csrfToken = "${_csrf.token}";
 </script>
 <script src="/scripts/profileOrders.js"></script>
 </body>

@@ -13,6 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/cart")
 @RequiredArgsConstructor
@@ -21,6 +24,16 @@ public class CartController {
     private final ProductService productService;
     private final UserService userService;
     private final CartService cartService;
+
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Integer>> getCartItemCount(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            return ResponseEntity.ok(Collections.singletonMap("count", 0));
+        }
+
+        int count = cartService.getCartItemsCount(user.getId());
+        return ResponseEntity.ok(Collections.singletonMap("count", count));
+    }
 
     @GetMapping
     public String showCart(@AuthenticationPrincipal User user, Model model) {

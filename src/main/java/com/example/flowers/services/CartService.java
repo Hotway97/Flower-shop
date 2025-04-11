@@ -19,6 +19,17 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     @Transactional
+    public int getCartItemsCount(Long userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart == null || cart.getCartItems() == null || cart.getCartItems().isEmpty()) {
+            return 0;
+        }
+
+        return cart.getCartItems().stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+    }
+    @Transactional
     public void addProductToCart(Cart cart, Product product) {
         Cart freshCart = cartRepository.findById(cart.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Cart not found"));

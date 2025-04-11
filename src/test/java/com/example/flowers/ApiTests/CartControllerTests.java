@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -54,6 +55,28 @@ class CartControllerTests {
 
         product = new Product();
         product.setId(5L);
+    }
+
+    // ========== getCartItemCount Tests ==========
+    @Test
+    void getCartItemCount_WhenUserIsNull_ReturnsZero() {
+        ResponseEntity<Map<String, Integer>> response = cartController.getCartItemCount(null);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().get("count"));
+    }
+
+    @Test
+    void getCartItemCount_WhenUserExists_ReturnsCount() {
+        when(cartService.getCartItemsCount(user.getId())).thenReturn(7);
+
+        ResponseEntity<Map<String, Integer>> response = cartController.getCartItemCount(user);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(7, response.getBody().get("count"));
+        verify(cartService).getCartItemsCount(user.getId());
     }
 
     // ========== showCart Tests ==========

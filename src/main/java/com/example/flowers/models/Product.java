@@ -39,7 +39,6 @@ public class Product {
         images.add(image);
     }
 
-    // Компараторы для сортировки
     public static final Comparator<Product> TitleAscComparator =
             Comparator.comparing(Product::getTitle, String.CASE_INSENSITIVE_ORDER);
 

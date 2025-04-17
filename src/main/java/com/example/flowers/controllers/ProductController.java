@@ -28,7 +28,6 @@ public class ProductController {
             Principal principal,
             Model model) {
 
-        // Парсим цены (обработка формата с пробелами)
         Integer minPrice = parsePrice(minPriceStr);
         Integer maxPrice = parsePrice(maxPriceStr);
 

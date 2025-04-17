@@ -10,6 +10,27 @@ html, body {
     box-sizing: border-box;
 }
 
+.think-container {
+    margin: 10px 0;
+    border-left: 3px solid #ddd;
+    padding-left: 10px;
+}
+
+.think-toggle {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 0.9em;
+}
+
+.think-content {
+    color: #888;
+    font-style: italic;
+    white-space: pre-wrap;
+}
+
 /* Основной контейнер */
 .chat-wrapper {
     flex: 1 1 auto;

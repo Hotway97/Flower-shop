@@ -41,7 +41,6 @@ public class CartController {
             return "redirect:/login";
         }
 
-        // ✅ Загружаем свежего пользователя из базы
         User freshUser = userService.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 

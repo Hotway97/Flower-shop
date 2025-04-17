@@ -35,13 +35,11 @@ public class PaymentController {
                 Long orderId = Long.valueOf(metadata.get("orderId").toString());
                 orderService.confirmPayment(orderId);
             } catch (NumberFormatException e) {
-                // Логируем ошибку, но возвращаем 200 OK
                 return ResponseEntity.ok().build();
             }
 
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            // Логируем ошибку, но возвращаем 200 OK (как требует ЮKassa API)
             return ResponseEntity.ok().build();
         }
     }

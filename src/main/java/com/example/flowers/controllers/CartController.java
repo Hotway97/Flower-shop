@@ -114,22 +114,9 @@ public class CartController {
         Cart cart = user.getCart();
         if (cart != null) {
             cartService.removeAllCartItem(cart, cartItemId);
-            // 🔄 Загружаем свежую корзину
             User freshUser = userService.findById(user.getId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + user.getId()));
             user.setCart(freshUser.getCart());
-        }
-        return "redirect:/cart";
-    }
-
-    @PostMapping("/checkout")
-    public String checkout(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            return "redirect:/login";
-        }
-        Cart cart = user.getCart();
-        if (cart != null) {
-            // Здесь может быть логика оформления заказа
         }
         return "redirect:/cart";
     }

@@ -13,8 +13,8 @@ public class Message {
     private Long id;
 
     @Lob
-    @Column(name = "content", nullable = false)
-    private byte[] content;
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
+    private String content;
 
     @Column(name = "timestamp", nullable = false, updatable = false)
     private LocalDateTime timestamp = LocalDateTime.now();
@@ -33,7 +33,7 @@ public class Message {
     // Конструкторы
     public Message() {}
 
-    public Message(byte[] content, User user, Chat chat, boolean isAiResponse) {
+    public Message(String content, User user, Chat chat, boolean isAiResponse) {
         this.content = content;
         this.user = user;
         this.chat = chat;
@@ -43,14 +43,14 @@ public class Message {
 
     // Геттеры и сеттеры
     public Long getId() { return id; }
-    public byte[] getContent() { return content; }
+    public String getContent() { return content; }
     public LocalDateTime getTimestamp() { return timestamp; }
     public User getUser() { return user; }
     public Chat getChat() { return chat; }
     public boolean isAiResponse() { return isAiResponse; }
 
     public void setId(Long id) { this.id = id; }
-    public void setContent(byte[] content) { this.content = content; }
+    public void setContent(String content) { this.content = content; }
     public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
     public void setUser(User user) { this.user = user; }
     public void setChat(Chat chat) { this.chat = chat; }

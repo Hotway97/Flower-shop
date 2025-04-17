@@ -35,13 +35,11 @@ public class OrderService {
 
         Long userId = order.getUser().getId();
 
-        // Добавляем товары пользователю
         for (OrderProduct orderProduct : order.getOrderProducts()) {
             Long productId = orderProduct.getProduct().getId();
             enrollUserInProduct(userId, productId);
         }
 
-        // Очищаем корзину пользователя полностью через итератор (для orphanRemoval)
         Cart cart = cartRepository.findByUserId(userId);
         if (cart != null) {
             Iterator<CartItem> it = cart.getCartItems().iterator();

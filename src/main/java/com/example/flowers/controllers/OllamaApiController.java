@@ -3,19 +3,16 @@ package com.example.flowers.controllers;
 import com.example.flowers.models.Message;
 import com.example.flowers.services.MessageService;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @RestController
 public class OllamaApiController {
+    private static final int MAX_HISTORY_MESSAGES = 8;
 
     private final ChatClient chatClient;
     private final MessageService messageService;
@@ -27,42 +24,45 @@ public class OllamaApiController {
 
     @PostMapping("/ollama")
     public Flux<String> ollama(@RequestParam Long chatId, @RequestParam String input) {
-        // Сохранение пользовательского сообщения
+        // 1. Сохраняем сообщение пользователя
         messageService.saveUserMessage(chatId, input);
 
-        List<Message> messages = messageService.getMessagesByChat(chatId);
-        List<String> formattedHistory = new ArrayList<>();
+        // 2. Получаем историю сообщений (только от пользователя)
+        List<String> context = messageService.getUserMessagesByChat(chatId).stream()
+                .limit(MAX_HISTORY_MESSAGES) // Ограничиваем глубину истории
+                .map(Message::getContent)
+                .collect(Collectors.toList());
 
-        // Если есть история сообщений, обрабатываем ее
-        if (!messages.isEmpty()) {
-            formattedHistory = messages.stream()
-                    .map(msg -> {
-                        String content = new String(msg.getContent(), StandardCharsets.UTF_8);
-                        return msg.isAiResponse()
-                                ? "Ответ: " + content
-                                : "Сообщение пользователя: " + content;
-                    })
-                    .collect(Collectors.toList());
-        }
+        // 3. Формируем промпт
+        String prompt = String.format("""
+            Контекст чата:
+            %s
+            
+            Текущее сообщение:
+            %s
+            
+            Ответь только на текущее сообщение, учитывая контекст:""",
+                String.join("\n", context),
+                input
+        );
 
+        // 4. Отправляем запрос и обрабатываем ответ
+        AtomicReference<String> fullResponse = new AtomicReference<>("");
 
-        // Создаём поток ответа от AI
-        Flux<String> responseStream = chatClient.prompt()
-                .user(input)
-                //.user(String.join("\n", formattedHistory))
+        return chatClient.prompt()
+                .user(prompt)
                 .stream()
                 .content()
-                .share();
-
-
-
-        // Сохранение полного ответа в бд
-        responseStream.collectList()
-                .map(responseList -> String.join("", responseList))
-                .doOnSuccess(fullResponse -> messageService.saveAiResponse(chatId, fullResponse))
-                .subscribe();
-
-        return responseStream;
+                .doOnNext(chunk -> {
+                    // Собираем ответ по частям
+                    fullResponse.updateAndGet(current -> current + chunk);
+                })
+                .doOnComplete(() -> {
+                    // 5. Сохраняем полный ответ один раз
+                    if (!fullResponse.get().isEmpty()) {
+                        messageService.saveAiResponse(chatId, fullResponse.get());
+                    }
+                });
     }
 
     @GetMapping("/ollama")

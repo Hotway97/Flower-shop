@@ -40,7 +40,7 @@ public class MessageController {
     public ResponseEntity<Message> sendMessage(
             @RequestParam(required = false) Long userId,
             @RequestParam Long chatId,
-            @RequestBody byte[] content,
+            @RequestBody String content,
             @RequestParam(required = false, defaultValue = "false") boolean isAiResponse
     ) {
         if (!isAiResponse && (userId == null || userRepository.findById(userId).isEmpty())) {

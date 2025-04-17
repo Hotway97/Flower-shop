@@ -14,6 +14,6 @@ public class OllamaChatController {
         if (user != null) {
             model.addAttribute("user", user);
         }
-        return "aichat"; // Возвращает шаблон aichat.ftlh
+        return "aichat";
     }
 }

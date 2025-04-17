@@ -6,13 +6,14 @@ import com.example.flowers.models.User;
 import com.example.flowers.repositories.ChatRepository;
 import com.example.flowers.repositories.MessageRepository;
 import com.example.flowers.repositories.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+@Transactional
 @Service
 public class MessageService {
 
@@ -26,6 +27,11 @@ public class MessageService {
         this.messageRepository = messageRepository;
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
+    }
+
+    @Transactional(readOnly = true) // Для read-only операций
+    public List<Message> getUserMessagesByChat(Long chatId) {
+        return messageRepository.findByChatIdAndIsAiResponseFalse(chatId);
     }
 
     @Transactional
@@ -51,7 +57,7 @@ public class MessageService {
         }
 
         Message message = new Message(
-                content.getBytes(StandardCharsets.UTF_8),
+                content, // Передаем строку напрямую
                 currentUser,
                 chat,
                 false
@@ -66,7 +72,7 @@ public class MessageService {
                 .orElseThrow(() -> new RuntimeException("Чат не найден"));
 
         Message message = new Message(
-                content.getBytes(StandardCharsets.UTF_8),
+                content,
                 null,
                 chat,
                 true

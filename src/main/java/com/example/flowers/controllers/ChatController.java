@@ -40,13 +40,12 @@ public class ChatController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new RuntimeException("User not found");
+            throw new RuntimeException("Пользователь не найден");
         }
-        Hibernate.initialize(user.getChat()); // Инициализация чата
+        Hibernate.initialize(user.getChat());
         return user;
     }
 
-    // Получение чата текущего пользователя
     @GetMapping
     public ResponseEntity<?> getChat() {
         User currentUser = getCurrentUser();
@@ -56,38 +55,35 @@ public class ChatController {
                 : ResponseEntity.ok(Collections.emptyList());
     }
 
-    // Создание чата
     @PostMapping
     public ResponseEntity<?> createChat() {
         User currentUser = getCurrentUser();
         if (currentUser.getChat() != null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "У вас уже есть чат"));
+            return ResponseEntity.badRequest().body(Map.of("error", "У пользователя уже есть чат"));
         }
 
         Chat chat = new Chat();
         chat.setUser(currentUser);
         chat.setChatName("Мой чат");
-        currentUser.setChat(chat); // Обновляем обратную связь
+        currentUser.setChat(chat);
         chatRepository.save(chat);
 
         return ResponseEntity.ok(new ChatDTO(chat.getId(), chat.getChatName(), chat.getCreatedAt()));
     }
 
-    // Удаление чата
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteChat(@PathVariable Long id) {
         User currentUser = getCurrentUser();
         Optional<Chat> chatOpt = chatRepository.findById(id);
 
         if (chatOpt.isPresent() && chatOpt.get().getUser().equals(currentUser)) {
-            currentUser.setChat(null); // Разрываем связь
+            currentUser.setChat(null);
             chatRepository.deleteById(id);
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
 
-    // Получение сообщений чата
     @GetMapping("/{chatId}/messages")
     public ResponseEntity<List<Map<String, Object>>> getChatMessages(@PathVariable Long chatId) {
         try {
@@ -102,7 +98,7 @@ public class ChatController {
             List<Map<String, Object>> response = messages.stream().map(msg -> {
                 Map<String, Object> messageData = new HashMap<>();
                 messageData.put("id", msg.getId());
-                messageData.put("content", new String(msg.getContent(), StandardCharsets.UTF_8));
+                messageData.put("content", msg.getContent());
                 messageData.put("isAiResponse", msg.isAiResponse());
                 messageData.put("timestamp", msg.getTimestamp());
                 messageData.put("userId", msg.getUser() != null ? msg.getUser().getId() : null);

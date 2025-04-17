@@ -49,7 +49,7 @@
 
 <main class="container py-4">
     <div class="chat-header">
-        <h1 class="text-center w-100">Персональный помощник</h1>
+        <h1 class="text-center w-100">Персональный ассистент</h1>
         <button id="clearChatBtn">Очистить историю</button>
     </div>
 

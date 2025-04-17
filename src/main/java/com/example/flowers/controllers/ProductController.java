@@ -46,7 +46,6 @@ public class ProductController {
             return null;
         }
         try {
-            // Удаляем все нецифровые символы, кроме минуса
             String normalized = priceStr.replaceAll("[^\\d-]", "");
             return Integer.parseInt(normalized);
         } catch (NumberFormatException e) {

@@ -41,7 +41,7 @@ class MessageControllerTests {
     private User testUser;
     private Chat testChat;
     private Message testMessage;
-    private byte[] testContent;
+    private String testContent;
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class MessageControllerTests {
         testChat.setChatName("Test Chat");
         testChat.setCreatedAt(LocalDateTime.now());
 
-        testContent = "Test message".getBytes();
+        testContent = "Test message";
 
         testMessage = new Message();
         testMessage.setId(1L);

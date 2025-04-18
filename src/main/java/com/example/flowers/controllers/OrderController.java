@@ -65,7 +65,6 @@ public class OrderController {
         return ResponseEntity.ok(userOrders);
     }
 
-    // Создать новый заказ. Здесь используется user_id, переданный в теле запроса.
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderDTO dto) {
         Order order = new Order();
@@ -78,13 +77,11 @@ public class OrderController {
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден с id: " + dto.getUserId()));
         order.setUser(user);
 
-        // Обработка списка product_ids
         List<Long> productIds = dto.getProductIds();
         if (productIds == null || productIds.isEmpty()) {
             throw new RuntimeException("Не предоставлены товары для заказа");
         }
 
-        // Группируем идентификаторы продуктов и считаем количество каждого
         Map<Long, Long> productCountMap = productIds.stream()
                 .collect(Collectors.groupingBy(pid -> pid, Collectors.counting()));
 
@@ -99,7 +96,6 @@ public class OrderController {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new RuntimeException("Продукт не найден с id: " + productId));
 
-            // Получаем цену продукта
             Long price = productRepository.findPriceById(productId);
             if (price == null || price <= 0) {
                 throw new RuntimeException("Некорректная цена для продукта с id: " + productId);
@@ -120,7 +116,7 @@ public class OrderController {
         order.setTotalAmount(totalAmount);
         orderRepository.save(order);
 
-        String description = "Оплата продуктов: " + String.join(", ", productNames);
+        String description = "Оплата товаров: " + String.join(", ", productNames);
         String paymentUrl = createYooKassaPayment(order.getId(), totalAmount, description);
 
         return ResponseEntity.ok(Map.of(

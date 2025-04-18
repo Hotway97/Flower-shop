@@ -194,18 +194,4 @@ class CartControllerTests {
         verify(cartService).clearCartByUserId(user.getId());
     }
 
-    // ========== checkout Tests ==========
-    @Test
-    void checkout_WhenUserAuthenticated_RedirectsToCart() {
-        String viewName = cartController.checkout(user);
-
-        assertEquals("redirect:/cart", viewName);
-    }
-
-    @Test
-    void checkout_WhenUserNotAuthenticated_RedirectsToLogin() {
-        String viewName = cartController.checkout(null);
-
-        assertEquals("redirect:/login", viewName);
-    }
 }

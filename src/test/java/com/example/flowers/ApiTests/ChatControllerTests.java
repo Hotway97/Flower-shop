@@ -65,7 +65,7 @@ class ChatControllerTests{
 
         testMessage = new Message();
         testMessage.setId(1L);
-        testMessage.setContent("Test message".getBytes(StandardCharsets.UTF_8));
+        testMessage.setContent("Test message");
         testMessage.setTimestamp(LocalDateTime.now());
         testMessage.setUser(testUser);
         testMessage.setChat(testChat);
@@ -134,7 +134,7 @@ class ChatControllerTests{
 
         // Assert
         assertEquals(400, response.getStatusCodeValue());
-        assertTrue(response.getBody().toString().contains("У вас уже есть чат"));
+        assertTrue(response.getBody().toString().contains("У пользователя уже есть чат"));
         verify(chatRepository, never()).save(any(Chat.class));
     }
 

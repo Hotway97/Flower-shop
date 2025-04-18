@@ -1,0 +1,69 @@
+
+services:
+  # 1. Сервис PostgreSQL
+  postgres:
+    image: postgres:17
+    container_name: myapp-postgres
+    environment:
+      POSTGRES_INITDB_SCHEMA: public
+      POSTGRES_INITDB_SCHEMA_GRANT: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    networks:
+      - myapp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 2. Spring Boot приложение
+  app:
+    build: .
+    container_name: myapp-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      OLLAMA_BASE_URL: http://ollama:11434
+    ports:
+      - "8080:8080"
+    networks:
+      - myapp-network
+    restart: unless-stopped
+    env_file:
+      - .env
+
+  # 3. Сервис Ollama с моделью deepseek:r1
+  ollama:
+    image: ollama/ollama
+    expose:
+      - 11434/tcp
+    ports:
+      - "11434:11434"
+    networks:
+      - myapp-network
+    healthcheck:
+      test: ollama --version || exit 1
+    entrypoint: ["/bin/sh", "/root/entrypoint.sh"]
+    volumes:
+      - ./ollama:/root/.ollama
+      - ./entrypoint.sh:/root/entrypoint.sh
+
+volumes:
+  postgres_data:
+  ollama_data:
+
+networks:
+  myapp-network:
+    driver: bridge

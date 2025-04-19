@@ -106,7 +106,7 @@ public class DeepSeekApiController {
 
 
     // Метод для парсинга JSON и извлечения текста
-    private String parseChunkContent(String jsonChunk) {
+    public String parseChunkContent(String jsonChunk) {
         try {
             JsonNode node = new ObjectMapper().readTree(jsonChunk);
             JsonNode choices = node.path("choices");

@@ -4,6 +4,7 @@ import com.example.flowers.controllers.AdminController;
 import com.example.flowers.models.Product;
 import com.example.flowers.models.User;
 import com.example.flowers.models.enums.Role;
+import com.example.flowers.repositories.ProductRepository;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,9 @@ class AdminControllerTests {
 
     @Mock
     private ProductService productService;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @Mock
     private Principal principal;
@@ -112,12 +116,16 @@ class AdminControllerTests {
 
     @Test
     void deleteProduct_WhenCalled_DeletesProductAndRedirects() {
-        when(productService.getUserByPrincipal(principal)).thenReturn(user);
+        product.setUser(user);
+
+        when(userService.getUserByPrincipal(principal)).thenReturn(user);
+        when(productRepository.findById(product.getId())).thenReturn(Optional.of(product));
 
         String viewName = adminController.deleteProduct(product.getId(), principal);
 
         assertEquals("redirect:/my/products", viewName);
-        verify(productService).deleteProduct(user, product.getId());
+        verify(productRepository).save(product);
+        verify(productRepository).delete(product);
     }
 
     // ========== My Products Tests ==========

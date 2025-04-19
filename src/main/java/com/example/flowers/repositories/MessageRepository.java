@@ -11,7 +11,8 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> findByChatId(Long chatId);
+    @Query(value = "SELECT * FROM message WHERE chat_id = CAST(:chatId AS BIGINT)", nativeQuery = true)
+    List<Message> findByChatId(@Param("chatId") Long chatId);
     List<Message> findByChatIdOrderByTimestampAsc(Long chatId);
     @Modifying
     @Query("DELETE FROM Message m WHERE m.chat.id = :chatId")
@@ -21,5 +22,3 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT m FROM Message m WHERE m.chat.id = :chatId AND m.isAiResponse = false ORDER BY m.timestamp DESC")
     List<Message> findUserMessagesByChatId(@Param("chatId") Long chatId, Pageable pageable);
 }
-
-

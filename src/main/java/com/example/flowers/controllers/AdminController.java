@@ -5,8 +5,10 @@ import com.example.flowers.models.User;
 import com.example.flowers.models.enums.Role;
 import com.example.flowers.services.ProductService;
 import com.example.flowers.services.UserService;
+import com.example.flowers.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,8 @@ public class AdminController {
     private final UserService userService;
     @Autowired
     private final ProductService productService;
+    @Autowired
+    private final ProductRepository productRepository;
 
     @GetMapping("/admin")
     public String admin(Model model, Principal principal) {
@@ -65,7 +69,25 @@ public class AdminController {
 
     @PostMapping("/product/delete/{id}")
     public String deleteProduct(@PathVariable Long id, Principal principal) {
-        productService.deleteProduct(productService.getUserByPrincipal(principal), id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Товар не найден"));
+
+        // Проверка прав
+        User user = userService.getUserByPrincipal(principal);
+        if (!user.getRoles().contains(Role.ROLE_ADMIN) && !product.getUser().equals(user)) {
+            throw new AccessDeniedException("Нет прав на удаление товара");
+        }
+
+        // Удаляем все изображения продукта
+        product.getImages().clear();
+
+        // Удаляем все связи с заказами
+        product.getOrderProducts().forEach(op -> op.setProduct(null));
+        product.getOrderProducts().clear();
+
+        productRepository.save(product);
+        productRepository.delete(product);
+
         return "redirect:/my/products";
     }
 

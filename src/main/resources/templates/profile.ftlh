@@ -88,14 +88,14 @@
 
         <div class="orders-scroll-container">
             <div class="row g-4" id="productsContainer"></div>
-        </div>
 
-        <!-- Заглушка, если заказов нет -->
-        <div id="noProductsPlaceholder" class="text-center py-5 bg-light rounded d-none">
-            <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
-            <h4>Вы еще не оформили ни одного заказа</h4>
-            <p class="text-muted">Найдите подходящий товар!</p>
-            <a href="/" class="btn btn-primary mt-2">Перейти к товарам</a>
+            <!-- Заглушка, если заказов нет -->
+            <div id="noProductsPlaceholder" class="text-center py-5 rounded d-none">
+                <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                <h4>Вы еще не оформили ни одного заказа</h4>
+                <p class="text-muted">Найдите подходящий товар!</p>
+                <a href="/" class="btn btn-purple mt-2">Перейти к товарам</a>
+            </div>
         </div>
     </div>
 </div>

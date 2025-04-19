@@ -64,15 +64,26 @@ $(document).ready(function () {
 
     // ======================== Обработка сообщений ========================
     function createAiMessage(content, isOldMessage = false) {
-        const aiMessageEl = $('<div class="message ai-message"><strong>Букетик:</strong> </div>');
-        const mainTextEl = $('<div class="ai-main-text"></div>');
-        const thinkContainer = $('<div class="think-container"></div>');
-        const thinkContent = $('<div class="think-content" style="display:none"></div>');
+        const aiMessageEl = $(`
+        <div class="message ai-message">
+            <strong>Букетик:</strong>
+            <div class="think-container">
+                <button class="think-toggle">📝 Показать рассуждения</button>
+                <div class="think-content" style="display:none"></div>
+            </div>
+            <div class="ai-main-text"></div>
+        </div>
+    `);
 
-        let inThinkBlock = false;
-        let remainingContent = content;
+        const mainTextEl = aiMessageEl.find('.ai-main-text');
+        const thinkContent = aiMessageEl.find('.think-content');
+        const thinkToggle = aiMessageEl.find('.think-toggle');
 
         // Парсинг контента
+        let inThinkBlock = false;
+        let remainingContent = content;
+        let hasThinkContent = false;
+
         while (remainingContent.length > 0) {
             if (!inThinkBlock) {
                 const thinkStart = remainingContent.indexOf('<think>');
@@ -80,6 +91,7 @@ $(document).ready(function () {
                     mainTextEl.append(remainingContent.substring(0, thinkStart));
                     inThinkBlock = true;
                     remainingContent = remainingContent.substring(thinkStart + 7);
+                    hasThinkContent = true;
                 } else {
                     mainTextEl.append(remainingContent);
                     remainingContent = '';
@@ -97,22 +109,23 @@ $(document).ready(function () {
             }
         }
 
-        // Добавляем контент рассуждений, но скрываем его
-        thinkContainer.append(thinkContent);
+        // Настройка поведения кнопки
+        thinkToggle.on('click', function() {
+            thinkContent.slideToggle();
+            $(this).text(
+                thinkContent.is(':visible')
+                    ? '📝 Скрыть рассуждения'
+                    : '📝 Показать рассуждения'
+            );
+        });
 
-        // Скрываем контейнер с рассуждениями, если он существует, но не добавляем кнопку
-        if (thinkContent.length > 0) {
-            thinkContainer.hide(); // скрываем контейнер, если есть рассуждения
-        } else {
-            thinkContainer.remove(); // если нет рассуждений, убираем контейнер вообще
+        // Скрываем контейнер, если нет рассуждений
+        if (!hasThinkContent) {
+            aiMessageEl.find('.think-container').hide();
         }
 
-        aiMessageEl.append(thinkContainer).append(mainTextEl);
-
-        // Возвращаем созданное сообщение без кнопки
         return aiMessageEl;
     }
-
 
     // ======================== Отправка сообщений ========================
     $('#chatForm').on('submit', function (e) {
@@ -145,13 +158,12 @@ $(document).ready(function () {
         const decoder = new TextDecoder();
         const aiMessage = createAiMessage('');
 
-        // Добавляем временный индикатор
-        const thinkingIndicator = $('<div class="message loading">Букетик думает...</div>');
-        $('#response').append(thinkingIndicator);
+        $('#response .loading').remove();
+        $('#response').append(aiMessage);
 
-        let hasVisibleContent = false;
         let inThinkBlock = false;
         let currentBuffer = '';
+        let hasThinkContent = false;
 
         function processChunk(text) {
             currentBuffer += text;
@@ -160,15 +172,11 @@ $(document).ready(function () {
                 if (!inThinkBlock) {
                     const thinkStart = currentBuffer.indexOf('<think>');
                     if (thinkStart >= 0) {
-                        // Если есть текст перед <think>, показываем его
-                        const visiblePart = currentBuffer.substring(0, thinkStart);
-                        if (visiblePart.trim().length > 0) {
-                            aiMessage.find('.ai-main-text').append(visiblePart);
-                            hasVisibleContent = true;
-                            thinkingIndicator.remove();
-                        }
+                        aiMessage.find('.ai-main-text').append(currentBuffer.substring(0, thinkStart));
                         currentBuffer = currentBuffer.substring(thinkStart + 7);
                         inThinkBlock = true;
+                        hasThinkContent = true;
+                        aiMessage.find('.think-container').show();
                     } else break;
                 } else {
                     const thinkEnd = currentBuffer.indexOf('</think>');
@@ -182,21 +190,13 @@ $(document).ready(function () {
 
             if (!inThinkBlock && currentBuffer.length > 0) {
                 aiMessage.find('.ai-main-text').append(currentBuffer);
-                hasVisibleContent = true;
-                thinkingIndicator.remove();
                 currentBuffer = '';
-            }
-
-            // Если основной текст пуст, но есть think-контент - сохраняем индикатор
-            if (!hasVisibleContent && thinkingIndicator.length === 0) {
-                $('#response').append(thinkingIndicator);
             }
         }
 
         function read() {
             reader.read().then(({ done, value }) => {
                 if (done) {
-                    thinkingIndicator.remove(); // Удаляем индикатор при завершении
                     if (currentBuffer.length > 0) processChunk('');
                     return;
                 }
@@ -205,8 +205,6 @@ $(document).ready(function () {
             });
         }
 
-        $('#response .loading').remove();
-        $('#response').append(aiMessage);
         read();
     }
 
@@ -220,6 +218,7 @@ $(document).ready(function () {
             </div>
         `);
     }
+
     // Очистка истории
     $('#clearChatBtn').on('click', function () {
         if (!activeChatId) return;

@@ -23,10 +23,10 @@ public class OrderProduct {
     private Order order;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
 
-    // Количество данного продукта в заказе
-    @Column(name = "quantity", nullable = false)
+    private String productTitle;
+    private Integer productPrice;
     private Integer quantity;
 }

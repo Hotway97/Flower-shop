@@ -27,10 +27,15 @@ html, body {
 
 .think-content {
     color: #888;
-    font-style: italic;
     white-space: pre-wrap;
 }
 
+.think-container {
+    order: 1; /* Кнопка будет перед основным текстом */
+}
+.ai-main-text {
+    order: 2; /* Основной текст после кнопки */
+}
 /* Основной контейнер */
 .chat-wrapper {
     flex: 1 1 auto;

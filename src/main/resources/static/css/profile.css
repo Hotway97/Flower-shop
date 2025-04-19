@@ -1,3 +1,25 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+body {
+    flex: 1;
+}
+
+.container {
+    flex: 1;
+}
+
+.footer {
+    margin-top: auto;
+}
+
 /* Заголовок заказов */
 .profile-orders-header {
     text-align: center;
@@ -85,11 +107,11 @@
 
 /* Заглушка при отсутствии заказов */
 #noProductsPlaceholder {
-    text-align: center;
+    background: #fff; /* как у блока заказов */
+    border: none;     /* убираем рамку */
+    border-radius: 6px;
     padding: 2rem;
-    background: #f9f9f9;
-    border-radius: 10px;
-    border: 1px dashed #ccc;
+    text-align: center;
 }
 
 /* Скролл-стилизация */
@@ -97,11 +119,11 @@
     width: 6px;
 }
 .orders-scroll-container::-webkit-scrollbar-thumb {
-    background-color: #ccc;
+    background-color: #fff;
     border-radius: 4px;
 }
 .orders-scroll-container::-webkit-scrollbar-track {
-    background-color: #f1f1f1;
+    background-color: #fff;
 }
 
 /* Кнопки */

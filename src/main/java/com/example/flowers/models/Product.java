@@ -2,7 +2,6 @@ package com.example.flowers.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,11 +14,15 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String description;
-    private Integer price;
+    private Integer price; // цена в копейках
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "product",
+            orphanRemoval = true)
     private List<Image> images = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
@@ -28,6 +31,12 @@ public class Product {
 
     private Long previewImageId;
     private LocalDateTime dateOfCreated;
+
+    @OneToMany(mappedBy = "product",
+            cascade = CascadeType.REFRESH,
+            fetch = FetchType.LAZY)
+    private List<OrderProduct> orderProducts = new ArrayList<>();
+
 
     @PrePersist
     private void onCreate() {
@@ -39,6 +48,7 @@ public class Product {
         images.add(image);
     }
 
+    // Компараторы для сортировки
     public static final Comparator<Product> TitleAscComparator =
             Comparator.comparing(Product::getTitle, String.CASE_INSENSITIVE_ORDER);
 

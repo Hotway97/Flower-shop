@@ -46,7 +46,7 @@ $(document).ready(function () {
             success: function (messages) {
                 messages.forEach(msg => {
                     if (msg.isAiResponse) {
-                        $('#response').append(createAiMessage(msg.content, true));
+                        $('#response').append(createAiMessage(msg.content));
                     } else {
                         $('#response').append(`
                             <div class="message user-message">
@@ -63,68 +63,13 @@ $(document).ready(function () {
     }
 
     // ======================== Обработка сообщений ========================
-    function createAiMessage(content, isOldMessage = false) {
-        const aiMessageEl = $(`
-        <div class="message ai-message">
-            <strong>Букетик:</strong>
-            <div class="think-container">
-                <button class="think-toggle">📝 Показать рассуждения</button>
-                <div class="think-content" style="display:none"></div>
+    function createAiMessage(content) {
+        return $(`
+            <div class="message ai-message">
+                <strong>Букетик:</strong> 
+                <span class="ai-text">${content}</span>
             </div>
-            <div class="ai-main-text"></div>
-        </div>
-    `);
-
-        const mainTextEl = aiMessageEl.find('.ai-main-text');
-        const thinkContent = aiMessageEl.find('.think-content');
-        const thinkToggle = aiMessageEl.find('.think-toggle');
-
-        // Парсинг контента
-        let inThinkBlock = false;
-        let remainingContent = content;
-        let hasThinkContent = false;
-
-        while (remainingContent.length > 0) {
-            if (!inThinkBlock) {
-                const thinkStart = remainingContent.indexOf('<think>');
-                if (thinkStart >= 0) {
-                    mainTextEl.append(remainingContent.substring(0, thinkStart));
-                    inThinkBlock = true;
-                    remainingContent = remainingContent.substring(thinkStart + 7);
-                    hasThinkContent = true;
-                } else {
-                    mainTextEl.append(remainingContent);
-                    remainingContent = '';
-                }
-            } else {
-                const thinkEnd = remainingContent.indexOf('</think>');
-                if (thinkEnd >= 0) {
-                    thinkContent.append(remainingContent.substring(0, thinkEnd));
-                    remainingContent = remainingContent.substring(thinkEnd + 8);
-                    inThinkBlock = false;
-                } else {
-                    thinkContent.append(remainingContent);
-                    remainingContent = '';
-                }
-            }
-        }
-
-        // Настройка поведения кнопки
-        thinkToggle.on('click', function() {
-            thinkContent.slideToggle();
-            $(this).text(
-                thinkContent.is(':visible')
-                    ? '📝 Скрыть рассуждения'
-                    : '📝 Показать рассуждения'
-            );
-        });
-
-        // Скрываем контейнер, если нет рассуждений
-        if (!hasThinkContent) {
-            aiMessageEl.find('.think-container').hide();
-        }
-
-        return aiMessageEl;
+        `);
     }
 
     // ======================== Отправка сообщений ========================
@@ -144,7 +89,7 @@ $(document).ready(function () {
             <div class="message loading">Букетик думает...</div>
         `);
 
-        fetch(`/ollama?chatId=${chatId}&input=${encodeURIComponent(message)}`, {
+        fetch(`/deepseek?chatId=${chatId}&input=${encodeURIComponent(message)}`, {
             method: 'POST'
         })
             .then(response => processAIResponse(response))
@@ -161,46 +106,12 @@ $(document).ready(function () {
         $('#response .loading').remove();
         $('#response').append(aiMessage);
 
-        let inThinkBlock = false;
-        let currentBuffer = '';
-        let hasThinkContent = false;
-
-        function processChunk(text) {
-            currentBuffer += text;
-
-            while (true) {
-                if (!inThinkBlock) {
-                    const thinkStart = currentBuffer.indexOf('<think>');
-                    if (thinkStart >= 0) {
-                        aiMessage.find('.ai-main-text').append(currentBuffer.substring(0, thinkStart));
-                        currentBuffer = currentBuffer.substring(thinkStart + 7);
-                        inThinkBlock = true;
-                        hasThinkContent = true;
-                        aiMessage.find('.think-container').show();
-                    } else break;
-                } else {
-                    const thinkEnd = currentBuffer.indexOf('</think>');
-                    if (thinkEnd >= 0) {
-                        aiMessage.find('.think-content').append(currentBuffer.substring(0, thinkEnd));
-                        currentBuffer = currentBuffer.substring(thinkEnd + 8);
-                        inThinkBlock = false;
-                    } else break;
-                }
-            }
-
-            if (!inThinkBlock && currentBuffer.length > 0) {
-                aiMessage.find('.ai-main-text').append(currentBuffer);
-                currentBuffer = '';
-            }
-        }
-
         function read() {
             reader.read().then(({ done, value }) => {
-                if (done) {
-                    if (currentBuffer.length > 0) processChunk('');
-                    return;
-                }
-                processChunk(decoder.decode(value));
+                if (done) return;
+
+                const textChunk = decoder.decode(value);
+                aiMessage.find('.ai-text').append(document.createTextNode(textChunk));
                 read();
             });
         }

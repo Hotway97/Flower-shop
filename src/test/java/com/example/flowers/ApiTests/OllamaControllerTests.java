@@ -1,14 +1,11 @@
 package com.example.flowers.ApiTests;
 
-import com.example.flowers.controllers.OllamaApiController;
-import com.example.flowers.controllers.OllamaChatController;
 import com.example.flowers.models.Chat;
 import com.example.flowers.models.User;
 import com.example.flowers.services.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

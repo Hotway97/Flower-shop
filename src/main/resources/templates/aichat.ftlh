@@ -56,7 +56,7 @@
     <div class="chat-window border rounded p-3 mb-3" id="response"></div>
 
     <form id="chatForm" class="d-flex">
-        <input id="userInput" type="text" class="form-control me-2" placeholder="Введите сообщение..." required>
+        <textarea type="text" id="userInput" name="userInput" required placeholder="Введите ваш запрос..."></textarea>
         <button type="submit" class="btn btn-primary">Отправить</button>
     </form>
 </main>

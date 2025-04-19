@@ -37,7 +37,7 @@ public class SecurityConfig {
                                 "/static/**",
                                 "/images/**",
                                 "/chats/**",
-                                "/ollama",
+                                "/deepseek",
                                 "/payments/webhook",
                                 "/api/payments/webhook"
                         )
@@ -62,7 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/chat").authenticated()
                         .requestMatchers("/cart/**").permitAll()
                         .requestMatchers("/chats/**").authenticated()
-                        .requestMatchers("/ollama").permitAll()
+                        .requestMatchers("/deepseek").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers("/cart/**").permitAll()
                         // Обратите внимание: правило .requestMatchers("/api/**").permitAll() очень широкое,

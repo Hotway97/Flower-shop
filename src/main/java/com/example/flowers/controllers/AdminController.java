@@ -78,10 +78,7 @@ public class AdminController {
             throw new AccessDeniedException("Нет прав на удаление товара");
         }
 
-        // Удаляем все изображения продукта
         product.getImages().clear();
-
-        // Удаляем все связи с заказами
         product.getOrderProducts().forEach(op -> op.setProduct(null));
         product.getOrderProducts().clear();
 

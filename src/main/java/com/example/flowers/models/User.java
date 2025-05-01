@@ -24,7 +24,6 @@ public class User implements UserDetails {
     private String phoneNumber;
     private String name;
     private boolean active;
-    private String activationCode;
 
     @Column(length = 1000)
     private String password;
@@ -89,6 +88,4 @@ public class User implements UserDetails {
         product.setUser(this);
         products.add(product);
     }
-
-    // Getters and Setters (lombok @Data generates them automatically)
 }

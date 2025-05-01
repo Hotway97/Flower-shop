@@ -88,7 +88,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         // Объединяем допустимые Origins в одном вызове
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://flowershop.loca.lt"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:8080", "https://flowershop.loca.lt", "https://adb3-2bbp-zboi.gw-1a.dockhost.net"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);

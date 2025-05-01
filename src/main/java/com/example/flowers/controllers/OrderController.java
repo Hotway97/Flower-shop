@@ -148,7 +148,7 @@ public class OrderController {
             request.put("description", description);
             request.put("confirmation", Map.of(
                     "type", "redirect",
-                    "return_url", "https://flowershop.loca.lt/profile"
+                    "return_url", "https://adb3-2bbp-zboi.gw-1a.dockhost.net/profile"
             ));
             request.put("capture", true);
             request.put("metadata", Map.of(
